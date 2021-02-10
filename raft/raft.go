@@ -19,7 +19,7 @@ package raft
 
 import "sync"
 import "sync/atomic"
-import "../labrpc"
+import "github.com/zilmano/raftproj/labrpc"
 
 // import "bytes"
 // import "../labgob"
