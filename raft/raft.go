@@ -45,22 +45,22 @@ const RANDOM_TIMER// max value in ms
 const HEARTBEAT_RATE = 5 // in hz, n beats a second
 
 type ApplyMsg struct {
-	CommandValid bool
-	Command      interface{}
-	CommandIndex int
+    CommandValid bool
+    Command      interface{}
+    CommandIndex int
 }
 
 type LogEntry struct {
-	Command interface{}
-	Term int
+    Command interface{}
+    Term int
 }
 
 
 type PeerState int
 const (
-	Follower = iota
-	Candidate 
-	Leader
+    Follower = iota
+    Candidate 
+    Leader
 )
 
 
@@ -70,16 +70,16 @@ const (
 //
 
 type Raft struct {
-	mu        sync.Mutex          // Lock to protect shared access to this peer's state
-	peers     []*labrpc.ClientEnd // RPC end points of all peers
-	persister *Persister          // Object to hold this peer's persisted state
-	me        int                 // this peer's index into peers[]
-	dead      int32               // set by Kill()
+    mu        sync.Mutex          // Lock to protect shared access to this peer's state
+    peers     []*labrpc.ClientEnd // RPC end points of all peers
+    persister *Persister          // Object to hold this peer's persisted state
+    me        int                 // this peer's index into peers[]
+    dead      int32               // set by Kill()
     
     
     // Your data here (2A, 2B, 2C).
-	// Look at the paper's Figure 2 for a description of what
-	// state a Raft server must maintain. 
+    // Look at the paper's Figure 2 for a description of what
+    // state a Raft server must maintain. 
     // Persistent Data
 
     currentTerm int
@@ -102,17 +102,17 @@ type Raft struct {
 // believes it is the leader.
 func (rf *Raft) GetState() (int, bool) {
 
-	var term int
-	var isleader bool
+    var term int
+    var isleader bool
 
-	term = rf.currentTerm
-	isleader = false
-	if state == Leader {
-		isleader = true
-	} 
+    term = rf.currentTerm
+    isleader = false
+    if state == Leader {
+        isleader = true
+    } 
 
-	// Your code here (2A).
-	return term, isleader
+    // Your code here (2A).
+    return term, isleader
 }
 
 //
@@ -121,14 +121,14 @@ func (rf *Raft) GetState() (int, bool) {
 // see paper's Figure 2 for a description of what should be persistent.
 //
 func (rf *Raft) persist() {
-	// Your code here (2C).
-	// Example:
-	// w := new(bytes.Buffer)
-	// e := labgob.NewEncoder(w)
-	// e.Encode(rf.xxx)
-	// e.Encode(rf.yyy)
-	// data := w.Bytes()
-	// rf.persister.SaveRaftState(data)
+    // Your code here (2C).
+    // Example:
+    // w := new(bytes.Buffer)
+    // e := labgob.NewEncoder(w)
+    // e.Encode(rf.xxx)
+    // e.Encode(rf.yyy)
+    // data := w.Bytes()
+    // rf.persister.SaveRaftState(data)
 }
 
 
@@ -136,22 +136,22 @@ func (rf *Raft) persist() {
 // restore previously persisted state.
 //
 func (rf *Raft) readPersist(data []byte) {
-	if data == nil || len(data) < 1 { // bootstrap without any state?
-		return
-	}
-	// Your code here (2C).
-	// Example:
-	// r := bytes.NewBuffer(data)
-	// d := labgob.NewDecoder(r)
-	// var xxx
-	// var yyy
-	// if d.Decode(&xxx) != nil ||
-	//    d.Decode(&yyy) != nil {
-	//   error...
-	// } else {
-	//   rf.xxx = xxx
-	//   rf.yyy = yyy
-	// }
+    if data == nil || len(data) < 1 { // bootstrap without any state?
+        return
+    }
+    // Your code here (2C).
+    // Example:
+    // r := bytes.NewBuffer(data)
+    // d := labgob.NewDecoder(r)
+    // var xxx
+    // var yyy
+    // if d.Decode(&xxx) != nil ||
+    //    d.Decode(&yyy) != nil {
+    //   error...
+    // } else {
+    //   rf.xxx = xxx
+    //   rf.yyy = yyy
+    // }
 }
 
 
@@ -160,11 +160,11 @@ func (rf *Raft) readPersist(data []byte) {
 // field names must start with capital letters!
 //
 type RequestVoteArgs struct {
-	// Your data here (2A, 2B).
-	candidateTerm int
-	candidateId int
-	lastLogIndex int
-	lastLogTerm int
+    // Your data here (2A, 2B).
+    candidateTerm int
+    candidateId int
+    lastLogIndex int
+    lastLogTerm int
 }
 
 //
@@ -172,18 +172,18 @@ type RequestVoteArgs struct {
 // field names must start with capital letters!
 //
 type AppendEntriesArgs struct {
-	// Your data here (2A).
-	leaderTerm int
-	leaderId int
-	prevLogIndex int
-	logEntries []LogEntry
-	prevLog
+    // Your data here (2A).
+    leaderTerm int
+    leaderId int
+    prevLogIndex int
+    logEntries []LogEntry
+    prevLog
 }
 
 type RequestVoteReply struct {
-	// Your data here (2A).
-	followerTerm int
-	voteGranted bool
+    // Your data here (2A).
+    followerTerm int
+    voteGranted bool
 }
 
 //
@@ -195,7 +195,7 @@ func (rf *Raft) AppendEntries(args *AppendRequestArgs) {
 }
 
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
-	// Your code here (2A, 2B).
+    // Your code here (2A, 2B).
 }
 
 //
@@ -228,9 +228,16 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 // the struct itself.
 //
 func (rf *Raft) sendRequestVote(server int, args *RequestVoteArgs, reply *RequestVoteReply) bool {
-	ok := rf.peers[server].Call("Raft.RequestVote", args, reply)
-	return ok
+    ok := rf.peers[server].Call("Raft.RequestVote", args, reply)
+    return ok
 }
+
+
+unc (rf *Raft) sendAppendEntries(server int, args *RequestVoteArgs, reply *RequestVoteReply) bool {
+    ok := rf.peers[server].Call("Raft.AppendEntries", args, reply)
+    return ok
+}
+
 
 
 //
@@ -248,14 +255,14 @@ func (rf *Raft) sendRequestVote(server int, args *RequestVoteArgs, reply *Reques
 // the leader.
 //
 func (rf *Raft) Start(command interface{}) (int, int, bool) {
-	index := -1
-	term := -1
-	isLeader := true
+    index := -1
+    term := -1
+    isLeader := true
 
-	// Your code here (2B).
+    // Your code here (2B).
 
 
-	return index, term, isLeader
+    return index, term, isLeader
 }
 
 //
@@ -270,13 +277,13 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 // should call killed() to check whether it should stop.
 //
 func (rf *Raft) Kill() {
-	atomic.StoreInt32(&rf.dead, 1)
-	// Your code here, if desired.
+    atomic.StoreInt32(&rf.dead, 1)
+    // Your code here, if desired.
 }
 
 func (rf *Raft) killed() bool {
-	z := atomic.LoadInt32(&rf.dead)
-	return z == 1
+    z := atomic.LoadInt32(&rf.dead)
+    return z == 1
 }
 
 //
@@ -291,54 +298,54 @@ func (rf *Raft) killed() bool {
 // for any long-running work.
 //
 func Make(peers []*labrpc.ClientEnd, me int,
-	persister *Persister, applyCh chan ApplyMsg) *Raft {
-	rf := &Raft{}
-	rf.peers = peers
-	rf.persister = persister
-	rf.me = me
+    persister *Persister, applyCh chan ApplyMsg) *Raft {
+    rf := &Raft{}
+    rf.peers = peers
+    rf.persister = persister
+    rf.me = me
 
-	// Your initialization code here (2A, 2B, 2C).
-	rf.dead = 0
+    // Your initialization code here (2A, 2B, 2C).
+    rf.dead = 0
 
-	rf.currentTerm = 0
-	rf.votedFor = -1
-	rf.commitIndex = -1
-	rf.lastApplied = -1
-	rf.isleader = false
+    rf.currentTerm = 0
+    rf.votedFor = -1
+    rf.commitIndex = -1
+    rf.lastApplied = -1
+    rf.isleader = false
 
 
-	// initialize from state persisted before a crash
-	rf.readPersist(persister.ReadRaftState())
+    // initialize from state persisted before a crash
+    rf.readPersist(persister.ReadRaftState())
 
-	go func() {
-		// Run forver
-		for {
-			switch rf.state {
-			case Follower:
-				snoozeTime = rand.Float64()*RANDOM_TIMER_LIMIT
-				time.Sleep(snoozeTime * time.Millisecond) 
-				rt.mu.Lock()
-				if rf.gotHeartbeat {
+    go func() {
+        // Run forver
+        for {
+            switch rf.state {
+            case Follower:
+                snoozeTime = rand.Float64()*RANDOM_TIMER_LIMIT
+                time.Sleep(snoozeTime * time.Millisecond) 
+                rt.mu.Lock()
+                if rf.gotHeartbeat {
 
-				} else {
-					rf.state = Candidate
-				}
-				rf.um.Unlock()
+                } else {
+                    rf.state = Candidate
+                }
+                rf.um.Unlock()
             
             case Candidate:
-            	fmt.Printf("peer %d: I am candidate!!",rf.me)
-            	time.Sleep(1)
+                fmt.Printf("peer %d: I am candidate!!",rf.me)
+                time.Sleep(1)
 
-			case Leader:
-				fmt.Printf("peer %d: I am leader!!",rf.me)
-            	time.Sleep(1)
-			}
-		}
-			// sleep for the randomized time
-			// if heartbeat recieved - restart the timeer
-			// if timer elapsed - start election round
+            case Leader:
+                fmt.Printf("peer %d: I am leader!!",rf.me)
+                time.Sleep(1)
+            }
+        }
+            // sleep for the randomized time
+            // if heartbeat recieved - restart the timeer
+            // if timer elapsed - start election round
 
-	}
+    }
 
-	return rf
+    return rf
 }
