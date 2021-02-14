@@ -219,7 +219,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
     // Your code here (2A, 2B).
-
+    fmt.Printf("\nI the Peer %d got Vote Request from cadidate %d!\n\n",rf.me, args.CandidateId)
     rf.mu.Lock()
     defer rf.mu.Unlock() // TODO: ask professor/TA about this atomisitc and if mutex is needed.
     reply.FollowerTerm = rf.currentTerm
@@ -241,9 +241,9 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
                         logUpToDate
     
     if reply.VoteGranted {
-        fmt.Printf("Peer %d: Vote for cadidate %d Granted!",rf.me, args.CandidateId)
+        fmt.Printf("\nPeer %d: Vote for cadidate %d Granted!",rf.me, args.CandidateId)
     } else {
-        fmt.Printf("Peer %d: Vote for cadidate %d Denied :/",rf.me, args.CandidateId)
+        fmt.Printf("\nPeer %d: Vote for cadidate %d Denied :/",rf.me, args.CandidateId)
     }
 }
 
@@ -423,7 +423,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
             }
             switch rf.state {
             case Follower:
-                fmt.Printf("peer %d: I am candidate!!",rf.me)
+                fmt.Printf("\n\npeer %d: I am candidate!!\n\n",rf.me)
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
                 rf.mu.Lock()
@@ -437,7 +437,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Unlock()
             
             case Candidate:
-                fmt.Printf("peer %d: I am candidate!!",rf.me)
+                fmt.Printf("\n\npeer %d: I am candidate!!",rf.me)
                 
                 rf.mu.Lock()
                 rf.currentTerm++
@@ -463,7 +463,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
                 var replies = make([]RequestVoteReply,numPeers)
                 voteCount++
-                for id:=0; id < numPeers; id++ {
+                for id:=0; id < (numPeers-1); id++ {
                     if id != rf.me  {
                         go func(server int, args *RequestVoteArgs, reply *RequestVoteReply) {
                            ok := rf.sendRequestVote(id, args, reply)
@@ -499,7 +499,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Unlock()
 
             case Leader:
-                fmt.Printf("peer %d: I am leader!!",rf.me)
+                fmt.Printf("peer %d: I am leader!!\n\n",rf.me)
                 time.Sleep(1/HEARTBEAT_RATE * time.Second)
                 rf.mu.Lock()
                 if rf.gotHeartbeat && rf.heartbeatTerm > rf.currentTerm {
