@@ -111,6 +111,8 @@ func (rf *Raft) GetState() (int, bool) {
     var term int
     var isleader bool
 
+    rf.mu.Lock()
+    defer rf.mu.Unlock()
     term = rf.currentTerm
     isleader = false
     if rf.state == Leader {
@@ -281,6 +283,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 //
 func (rf *Raft) sendRequestVote(server int, args *RequestVoteArgs, reply *RequestVoteReply) bool {
     fmt.Printf("----> sendRequestProc: sendRequest to %d from %d\n", server, args.CandidateId)
+    // Why is there no lock here? We are accessing a common variable.
     ok := rf.peers[server].Call("Raft.RequestVote", args, reply)
     return ok
 }
@@ -439,8 +442,9 @@ func Make(peers []*labrpc.ClientEnd, me int,
             case Candidate:
                 
                 rf.mu.Lock()
-                fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
                 rf.currentTerm++
+                fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
+                
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 myId := rf.me // TODO: Ask instructors - I am latching the server id to avoid a lock later on line 479, is this a correct pattern?
                                // Ask instructors: what happens if we use a mutex.lock on one piece of code, and another piece of code access these variables without a mutex, will it wait for the mutex
@@ -467,13 +471,16 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 var replies = make([]RequestVoteReply,numPeers)
                 //voteCount++
                 
-                fmt.Printf("   peer %d candidate: Sending requests to %d of peers\n", rf.me, numPeers)
-                for id:=0; id < (numPeers)-1; id++ {
+                fmt.Printf("   peer %d candidate: Sending requests to %d peers\n", rf.me, numPeers)
+                for id:=0; id < numPeers; id++ {
+                    fmt.Printf("Id: %d myId:%d\n", id, myId)
                     if id != myId  {
-                        //fmt.Printf("Id: %d\n", id)
+                        
                         go func(server int, args *RequestVoteArgs, reply *RequestVoteReply) {
                            ok := rf.sendRequestVote(server, args, reply)
-                           fmt.Printf("  peer %d candidate: Send request to peer %d worked.\n", rf.me, id)
+                           rf.mu.Lock()
+                           fmt.Printf("  peer %d candidate: Send request to peer %d worked.\n", rf.me, server)
+                           rf.mu.Unlock()
                            if !ok {
                              reply.VoteGranted = false  
                            }
@@ -484,18 +491,21 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
                 // Sleep for enough for the messages and votes to happen, may be can be less then that, it depends on network communication
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
+                fmt.Printf("   peer candidate %d:Set snooze timer to time %f\n", rf.me, snoozeTime)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+                fmt.Printf("   peer candidate %d:Waking up from snooze to count votes. %f\n", rf.me, snoozeTime)
+                
 
+                
                 rf.mu.Lock()
                 if (rf.gotHeartbeat && rf.currentTerm <= rf.heartbeatTerm) {
                     fmt.Printf("-- Peer %d candidate of term %d: I got heartbeat from a leader. So I step down :)\n",rf.me, rf.currentTerm)
-                    rf.mu.Lock()
                     rf.state = Follower
                     rf.currentTerm = rf.heartbeatTerm
                     rf.mu.Unlock()
                 } else {
-                    rf.mu.Lock()
-                    fmt.Printf("-> Peer %d candidate: I am elected leader for term %d\n\n",rf.me,rf.currentTerm)
+                    fmt.Printf("-> Peer %d candidate term%d: Start Counting votes...\n\n",rf.me,rf.currentTerm)
+                    
                     for id:=0; id < numPeers; id++ {
                         if id != rf.me && replies[id].VoteGranted {
                             voteCount++
@@ -503,12 +513,18 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     }
 
                     if voteCount > numPeers/2 {
+                        fmt.Printf("-> Peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
                         rf.state = Leader
-                    } 
-                    rf.mu.Unlock()
-
-                    fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
-                    rf.sendHeartbeats()
+                        rf.mu.Unlock()
+                        fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
+                        rf.sendHeartbeats()
+                        
+                    } else {
+                        rf.mu.Unlock()
+                        fmt.Printf("-> Peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
+                    }
+                    
+                    
                 }
                 
                 
@@ -527,7 +543,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     fmt.Printf("\n   Leader %d term %d: Got hearbeat from a stronger leader. Cowardly stepping down to be follower :/.\n\n", rf.me, rf.currentTerm)
                     rf.state = Follower
                     rf.currentTerm = rf.heartbeatTerm
-                    //rf.mu.Unlock() 
+                    rf.mu.Unlock() 
                 
                 } else if rf.gotHeartbeat && rf.heartbeatTerm == rf.currentTerm {
                     //log.Fatal("Fatal Error: Have two leaders in the same term!!!Peer %d", rf.me)
