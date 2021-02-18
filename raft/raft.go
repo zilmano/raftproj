@@ -417,8 +417,10 @@ func Make(peers []*labrpc.ClientEnd, me int,
         // Run forver
         for {
             if rf.killed() {
+                fmt.Printf("*** Peer %d term %d: I have been terminated. Bye.",rf.me, rf.currentTerm)
                 return 
             }
+            
             switch rf.state {
             case Follower:
                 fmt.Printf("-- peer %d term %d, status update:  I am follolwer.\n",rf.me, rf.currentTerm)
@@ -490,6 +492,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 
 
                 // Sleep for enough for the messages and votes to happen, may be can be less then that, it depends on network communication
+                // TODO: should this be the same as the 
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
                 fmt.Printf("   peer candidate %d:Set snooze timer to time %f\n", rf.me, snoozeTime)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
@@ -520,8 +523,14 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         rf.sendHeartbeats()
                         
                     } else {
+                        rf.gotHeartbeat = false
+                        rf.heartbeatTerm = -1 // TODO: do we need to reset this at all?
+                        // need to reset votedFor as well.
+                        rf.votedFor = -1
                         rf.mu.Unlock()
                         fmt.Printf("-> Peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
+                        snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
+                        time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
                     }
                     
                     
