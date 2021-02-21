@@ -62,7 +62,11 @@ func make_config(t *testing.T, n int, unreliable bool) *config {
 		if runtime.NumCPU() < 2 {
 			fmt.Printf("warning: only one CPU, which may conceal locking bugs\n")
 		}
-		rand.Seed(makeSeed())
+		seed := makeSeed()
+		//var seed int64 = 3010380158031221671
+		fmt.Printf("CONFIG:Random seed is:%d\n", seed)
+		rand.Seed(seed)
+
 	})
 	runtime.GOMAXPROCS(4)
 	cfg := &config{}
