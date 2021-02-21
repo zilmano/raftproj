@@ -101,6 +101,8 @@ type Raft struct {
     gotHeartbeat bool
     heartbeatTerm int
 
+    votedForTerm int
+
       
 }
 
@@ -242,11 +244,12 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
     
     // TODO: Change 
     
-    reply.VoteGranted = (rf.currentTerm < args.CandidateTerm && 
+    reply.VoteGranted = (rf.votedForTerm < args.CandidateTerm) &&
+                        (rf.currentTerm < args.CandidateTerm && 
                         (rf.votedFor == -1 || rf.votedFor == args.CandidateId) &&
                         logUpToDate) /*&&
                         rf.state != Leader*/
-    
+    rf.votedForTerm = args.CandidateTerm
     if reply.VoteGranted {
         rf.votedFor = args.CandidateId
         fmt.Printf("-> Peer %d: Vote for cadidate %d Granted!\n",rf.me, args.CandidateId)
@@ -415,6 +418,8 @@ func Make(peers []*labrpc.ClientEnd, me int,
     rf.heartbeatTerm = -1
     rf.gotHeartbeat = false
 
+    rf.votedForTerm = -1
+
 
     // initialize from state persisted before a crash
     rf.readPersist(persister.ReadRaftState())
@@ -422,7 +427,8 @@ func Make(peers []*labrpc.ClientEnd, me int,
     
     seedMu.Lock()
     if !setSeed {
-        seed := time.Now().UTC().UnixNano()
+        var seed int64 = 1613924495564524650
+        //seed := time.Now().UTC().UnixNano()
         fmt.Printf("Random Seed:%d:\n\n\n",seed)
         rand.Seed(seed) 
         setSeed = true
@@ -433,6 +439,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
     go func() {
         // Run forver
         for {
+            
             if rf.killed() {
                 fmt.Printf("*** Peer %d term %d: I have been terminated. Bye.",rf.me, rf.currentTerm)
                 return 
@@ -549,8 +556,18 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         fmt.Printf("-> Peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
                         snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
                         time.Sleep(time.Duration(snoozeTime) * time.Millisecond)
+                        rf.mu.Lock()
+                        if (rf.gotHeartbeat && rf.currentTerm <= rf.heartbeatTerm) {
+                            fmt.Printf("-- Peer %d candidate of term %d: I got heartbeat from a leader. So I step down :) \n",rf.me, rf.currentTerm)
+                            rf.state = Follower
+                            rf.currentTerm = rf.heartbeatTerm
+                        } else if (rf.votedFor > -1 && rf.votedForTerm > rf.currentTerm) {
+                            fmt.Printf("-- Peer %d candidate of term %d: I got vote request from a higher term candidate. So I step down :) \n",rf.me, rf.currentTerm)
+                            rf.state = Follower
+                            rf.currentTerm = rf.heartbeatTerm
+                        }   
+                        rf.mu.Unlock() 
                     }
-                    
                     
                 }
                 
