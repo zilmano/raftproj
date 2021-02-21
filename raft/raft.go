@@ -424,17 +424,6 @@ func Make(peers []*labrpc.ClientEnd, me int,
     // initialize from state persisted before a crash
     rf.readPersist(persister.ReadRaftState())
 
-    
-    seedMu.Lock()
-    if !setSeed {
-        var seed int64 = 1613924495564524650
-        //seed := time.Now().UTC().UnixNano()
-        fmt.Printf("Random Seed:%d:\n\n\n",seed)
-        rand.Seed(seed) 
-        setSeed = true
-    }
-    seedMu.Unlock()
-    
     // Start Peer State Machine
     go func() {
         // Run forver
@@ -456,7 +445,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 if rf.gotHeartbeat && rf.heartbeatTerm < rf.currentTerm {
                     // Figure out what raft needs to do in this case of hearbeat from leader with a term that is not up-to-date.
                     //log.Fatal("Error: Got hearbeat from a leader with term less then mine. Not implemented yet. Peer %d", rf.me)
-                    log.Fatal("Error: Got hearbeat from a leader with term less then mine. Not implemented yet")
+                    fmt.Printf("peer follower %d: Got hearbeat from outdated leader. Ignoring it.",rf.me)
                 } else if (!rf.gotHeartbeat) {
                     fmt.Printf("-> peer follower %d: did not get heartbeat during the election timer. Starting election!\n",rf.me) 
                     rf.state = Candidate
