@@ -217,6 +217,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     fmt.Printf("Peer %d term %d: Got heartbeat from leader %d\n",rf.me, rf.currentTerm, args.LeaderId)
     rf.gotHeartbeat = true
     rf.heartbeatTerm = args.LeaderTerm
+    
 
 }
 
@@ -239,10 +240,12 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
         logUpToDate = true
     }
     
-    reply.VoteGranted = rf.currentTerm <= args.CandidateTerm && 
+    // TODO: Change 
+    
+    reply.VoteGranted = (rf.currentTerm < args.CandidateTerm && 
                         (rf.votedFor == -1 || rf.votedFor == args.CandidateId) &&
-                        logUpToDate &&
-                        rf.state != Leader
+                        logUpToDate) /*&&
+                        rf.state != Leader*/
     
     if reply.VoteGranted {
         rf.votedFor = args.CandidateId
@@ -388,6 +391,11 @@ func (rf *Raft) killed() bool {
 
 
 
+// Shared memory var to set random seed once.
+var setSeed bool = false
+var seedMu sync.Mutex
+
+
 func Make(peers []*labrpc.ClientEnd, me int,
     persister *Persister, applyCh chan ApplyMsg) *Raft {
     rf := &Raft{}
@@ -411,6 +419,15 @@ func Make(peers []*labrpc.ClientEnd, me int,
     // initialize from state persisted before a crash
     rf.readPersist(persister.ReadRaftState())
 
+    
+    seedMu.Lock()
+    if !setSeed {
+        seed := time.Now().UTC().UnixNano()
+        fmt.Printf("Random Seed:%d:\n\n\n",seed)
+        rand.Seed(seed) 
+        setSeed = true
+    }
+    seedMu.Unlock()
     
     // Start Peer State Machine
     go func() {
@@ -438,6 +455,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     rf.state = Candidate
                 } else {
                     fmt.Printf("-> peer follower %d: got heartbeat during the election timer\n",rf.me)
+                    rf.currentTerm = rf.heartbeatTerm
                 }
                 rf.mu.Unlock()
             
@@ -530,7 +548,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         rf.mu.Unlock()
                         fmt.Printf("-> Peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
                         snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
-                        time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+                        time.Sleep(time.Duration(snoozeTime) * time.Millisecond)
                     }
                     
                     
