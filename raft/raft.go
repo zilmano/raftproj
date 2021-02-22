@@ -199,11 +199,6 @@ type AppendEntriesReply struct {
     Success bool
 }
 
-
-//
-// example RequestVote RPC handler.
-//
-
 func (rf *Raft) CheckTerm(peerTerm int) {
     rf.mu.Lock()
     defer rf.mu.Unlock()
@@ -231,12 +226,10 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
 }
 
-
-
-
-
+//
+// example RequestVote RPC handler.
+//
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
-    // Your code here (2A, 2B).
     fmt.Printf("\n -> I the Peer %d in got Vote Request from cadidate %d!\n",rf.me, args.CandidateId)
     
     rf.CheckTerm(args.CandidateTerm) 
@@ -257,6 +250,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
         len(rf.log) >= (args.LastLogIndex+1) {
         logUpToDate = true
     }
+    // 2B code end
     
     reply.VoteGranted = (rf.currentTerm <= args.CandidateTerm && 
                         (rf.votedFor == -1 || rf.votedFor == args.CandidateId) &&
@@ -314,7 +308,6 @@ func (rf *Raft) sendAppendEntries(server int, args *AppendEntriesArgs, reply *Ap
 }
 
 func (rf *Raft) sendHeartbeats() {
-    
     // TODO: make the nexty 6 lines into a function later?
     rf.mu.Lock()
     numPeers := len(rf.peers)
@@ -338,10 +331,9 @@ func (rf *Raft) sendHeartbeats() {
     rf.mu.Unlock()
     //2B code end.
 
-    //var replies = make([]AppendEntriesReply, numPeers) 
     for id := 0; id < numPeers; id++ {
         if id != myId {
-            // TODO: Ask Instructors: Will I eventually run out of space if 
+            // TODO: Ask Instructors: Will we eventually run out of space if keep sending these go routines and there are no answers? we wait until sendAppendEntries respond
             go func(serverId int) {
                 var reply AppendEntriesReply
                 rf.sendAppendEntries(serverId, &args, &reply)
@@ -355,14 +347,12 @@ func (rf *Raft) sendHeartbeats() {
 
 
 func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
-    
-   
+ 
     fmt.Printf("   peer %d candidate: Sending requests to %d peers\n", rf.me, numPeers)
-    
+ 
     // 2B code start - change if needed
     lastLogIndex := -1
     lastLogTerm := -1
-
     rf.mu.Lock()
     myId := rf.me // TODO: Ask instructors - I am latching the server id to avoid a lock later on line 479, is this a correct pattern?
                                // Ask instructors: what happens if we use a mutex.lock on one piece of code, and another piece of code access these variables without a mutex, will it wait for the mutex
@@ -371,8 +361,6 @@ func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
         lastLogIndex = len(rf.log)-1
         lastLogTerm = rf.log[lastLogIndex].Term 
     }
-    // 2B code end
-
     var args = RequestVoteArgs {
         CandidateTerm: rf.currentTerm,
         CandidateId: rf.me,
@@ -390,10 +378,11 @@ func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
                // TODO: Do I need the lock for reading onle?
                rf.mu.Lock()
                fmt.Printf("Peer %d candidate: Send request to peer %d worked.\n", rf.me, server)
-               rf.mu.Unlock()
                if !ok {
                  reply.VoteGranted = false  
                }
+               rf.mu.Unlock()
+    
             } (id, &args, &replies[id])
         }
     }
@@ -419,8 +408,6 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     isLeader := true
 
     // Your code here (2B code).
-
-
     return index, term, isLeader
 }
 
@@ -457,7 +444,6 @@ func (rf *Raft) killed() bool {
 // for any long-running work.
 //
 
-
 func Make(peers []*labrpc.ClientEnd, me int,
     persister *Persister, applyCh chan ApplyMsg) *Raft {
     rf := &Raft{}
@@ -475,8 +461,6 @@ func Make(peers []*labrpc.ClientEnd, me int,
     rf.state = Follower
     rf.gotHeartbeat = false
 
-    
-
     // initialize from state persisted before a crash
     rf.readPersist(persister.ReadRaftState())
 
@@ -490,7 +474,11 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 return 
             }
             
-            switch rf.state {
+            rf.mu.Lock()
+            state := rf.state
+            rf.mu.Unlock()
+            
+            switch state {
             case Follower:
                 fmt.Printf("-- peer %d term %d, status update:  I am follolwer.\n",rf.me, rf.currentTerm)
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
@@ -506,8 +494,8 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.gotHeartbeat = false
                 rf.mu.Unlock()
             
+
             case Candidate:
-                
                 rf.mu.Lock()
                 rf.currentTerm++
                 fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
@@ -519,8 +507,6 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 var replies = make([]RequestVoteReply, numPeers)
                 rf.sendVoteRequests(replies, numPeers)
 
-                // Sleep for enough for the messages and votes to happen, may be can be less then that, it depends on network communication
-                // TODO: should this be the same as the 
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
                 fmt.Printf("   peer %d term %d -- candidate -- :Set snooze timer to time %f\n", rf.me, rf.currentTerm, snoozeTime)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
@@ -540,8 +526,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         fmt.Printf("-- peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
                         rf.state = Leader
                         fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
-                        rf.mu.Unlock()
-                        rf.sendHeartbeats()
+                        go rf.sendHeartbeats()
                         // sanity check: (if there is another leader in this term then it cannot be get the majority of votes)
                         if rf.gotHeartbeat {
                             log.Fatal("Two leaders won election in the same term!")
@@ -549,21 +534,18 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     } else if rf.gotHeartbeat {
                         fmt.Printf("-- peer %d candidate of term %d: I got heartbeat from a leader. So I step down :) \n",rf.me, rf.currentTerm)
                         rf.state = Follower
-                        rf.mu.Unlock() 
                     } else {
                         fmt.Printf("-- peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
-                        rf.mu.Unlock() 
                     }  
-                } else {
-                    rf.mu.Unlock()
-                }
-            
+                } 
+                rf.mu.Unlock()
+                
+
             case Leader:
                 fmt.Printf("-- Peer %d term %d: I am leader.\n\n",rf.me, rf.currentTerm)
                 snoozeTime := (1/HEARTBEAT_RATE)*1000 
                 fmt.Printf("   Leader %d term %d: snooze for %f\n", rf.me, rf.currentTerm, snoozeTime)
                 
-                //time.Sleep(time.Duration(snoozeTime) * time.Millisecond)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond)
                 
                 rf.mu.Lock()
@@ -572,11 +554,9 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         log.Fatal("Fatal Error: Have two leaders in the same term!!!")
                     }
                     fmt.Printf("   peer %d term %d --leader-- : I send periodic heartbeat.\n",rf.me, rf.currentTerm)
-                    rf.mu.Unlock()
-                    rf.sendHeartbeats()
-                } else {
-                    rf.mu.Unlock()
-                }
+                    go rf.sendHeartbeats()
+                } 
+                rf.mu.Unlock()
             }
         }
     } ()
