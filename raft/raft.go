@@ -44,6 +44,8 @@ import "log"
 //
 
 
+
+
 const RANDOM_TIMER_MAX = 600 // max value in ms
 const RANDOM_TIMER_MIN = 300 // max value in ms
 const HEARTBEAT_RATE = 5.0 // in hz, n beats a second
@@ -91,12 +93,27 @@ type Raft struct {
     // Volatile Data
     commitIndex int
     lastApplied int
+    applyCh chan ApplyMsg
+    
 
     nextIndex []int
     matchInex []int
 
     state PeerState
     gotHeartbeat bool
+    
+}
+
+
+func find(input []int, elem int)(bool){
+
+    for i := 0; i < len(input); i++ {
+        if(input[i]==elem){
+            return true
+        }
+        
+    }
+    return false
     
 }
 
@@ -184,6 +201,7 @@ type AppendEntriesArgs struct {
     LastLogIndex int
     LastLogTerm int
     LogEntries []LogEntry
+    LeaderCommitIndex int
     
 }
 
@@ -214,6 +232,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
     // TODO: Ask professor/TA if we need a lock here, as all the appendEntries set the heartbeat to 'true'
     //       so maybe technically we don't need it?
+
+
     fmt.Printf("Peer %d term %d: Got heartbeat from leader %d\n",rf.me, rf.currentTerm, args.LeaderId)
     rf.CheckTerm(args.LeaderTerm)
     rf.mu.Lock()
@@ -222,7 +242,19 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         rf.gotHeartbeat = true
     }
     
-    // Enter 2B code here
+    if(len(args.LogEntries)==1){
+
+        if(args.LeaderTerm<rf.currentTerm){
+            reply.Success = false
+        }
+
+        if(args.LastLogIndex => (len(rf.log)-1) && rf.log[args.LastLogIndex].Term != args.LastLogTerm && args.prevLogIndex > -1){
+            reply.Success = false
+        }
+        
+        
+
+    }
     
 }
 
@@ -407,8 +439,98 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     term := -1
     isLeader := true
 
+    if len(rf.log) > 0 {
+        index = len(rf.log)-1
+        term = rf.log[lastLogIndex].Term 
+    }
+    
+    if(rf.state!=Leader){
+        return index, rf.currentTerm, false
+    }
+    
+    var oneEntry LogEntry
+    oneEntry.Command = command
+    oneEntry.Term = rf.currentTerm
+   
+
+    rf.log = append(rf.log,oneEntry)
+    var logEntries []LogEntry
+    logEntries = append(logEntries,one_entry)
+
+    go func(){
+    
+    // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
+    // for loop only iterates over the left peers.
+    
+    while 1{
+
+    rf.mu.Lock()
+    numPeers := len(rf.peers)
+    
+    myId := rf.me
+
+    committed := false
+    
+    var args = AppendEntriesArgs {
+        LeaderTerm : rf.currentTerm,
+        LeaderId: rf.me,
+        LastLogIndex: index,
+        LastLogTerm: term,
+        LogEntries: logEntries,
+        LeaderCommitIndex: rf.commitIndex,
+    }
+    rf.mu.Unlock()
+
+    successReplyCount:=0
+    receivedResponse []int
+    receivedResponse = append(receivedResponse,myId)
+
+    for id := 0; id < numPeers; id++ {
+        if (!find(receivedResponse,id))  {
+
+            go func(serverId int) {
+                var reply AppendEntriesReply
+                rf.sendAppendEntries(serverId, &args, &reply)
+                rf.CheckTerm(reply.CurrentTerm)
+
+                if(reply.Success){
+                    successReplyCount++
+                    receivedResponse = append(receivedResponse,serverId)
+                }
+            } (id)
+        }
+        }
+
+        time.sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
+
+        if (successReplyCount == (numPeers)){
+            return
+        }
+
+        if(!committed && successReplyCount>(numPeers/2)){
+                
+                go func(){
+                    var oneApplyMsg ApplyMsg
+                    oneApplyMsg.CommandValid = true
+                    oneApplyMsg.CommandIndex = (index+1)
+                    oneApplyMsg.Command = command
+                    committed = true
+                    applyCh <- oneApplyMsg
+
+                
+                
+
+                }
+        }
+
+
+
+    }
+
+}
+
     // Your code here (2B code).
-    return index, term, isLeader
+    return (index+1), term, isLeader
 }
 
 //
@@ -442,7 +564,6 @@ func (rf *Raft) killed() bool {
 // tester or service expects Raft to send ApplyMsg messages.
 // Make() must return quickly, so it should start goroutines
 // for any long-running work.
-//
 
 func Make(peers []*labrpc.ClientEnd, me int,
     persister *Persister, applyCh chan ApplyMsg) *Raft {
@@ -450,6 +571,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
     rf.peers = peers
     rf.persister = persister
     rf.me = me
+    rf.applyCh = applyCh
 
     // Your initialization code here (2A, 2B, 2C).
     rf.dead = 0
