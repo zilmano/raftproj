@@ -247,10 +247,16 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         if(args.LeaderTerm<rf.currentTerm){
             reply.Success = false
         }
-
-        if(args.LastLogIndex => (len(rf.log)-1) && rf.log[args.LastLogIndex].Term != args.LastLogTerm && args.prevLogIndex > -1){
+        
+        
+        fmt.Printf("\nchecking some false conditions. LastLogIndex of leader is %d and length of our log is %d\n",args.LastLogIndex,((len(rf.log)-1)))
+        if((args.LastLogIndex > -1) && (args.LastLogIndex >= (len(rf.log)-1) ) && (rf.log[args.LastLogIndex].Term != args.LastLogTerm )){
+            fmt.Printf("\nsuccess set to false\n")
             reply.Success = false
+        
         }
+        fmt.Printf("\nreturning from AppendEntry RPC\n")
+
         
         
 
@@ -348,9 +354,16 @@ func (rf *Raft) sendHeartbeats() {
     lastLogIndex := -1
     lastLogTerm := -1
     myId := rf.me
-    if len(rf.log) > 0 {
+    if len(rf.log) > 0 && (rf.commitIndex>-1){
+        /*
         lastLogIndex = numPeers-1
+        fmt.Printf("\nNumber of peers is %d within sendHeartbeats\n",numPeers)  // Discuss 1
         lastLogTerm = rf.log[numPeers-1].Term 
+        */
+
+        lastLogIndex = rf.commitIndex
+        lastLogTerm = rf.log[lastLogIndex].Term
+
     }
     
     var args = AppendEntriesArgs {
@@ -441,7 +454,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
     if len(rf.log) > 0 {
         index = len(rf.log)-1
-        term = rf.log[lastLogIndex].Term 
+        term = rf.log[index].Term // Discuss 2
     }
     
     if(rf.state!=Leader){
@@ -455,53 +468,62 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
     rf.log = append(rf.log,oneEntry)
     var logEntries []LogEntry
-    logEntries = append(logEntries,one_entry)
+    logEntries = append(logEntries,oneEntry)
 
     go func(){
     
     // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
     // for loop only iterates over the left peers.
+ 
     
-    while 1{
-
-    rf.mu.Lock()
-    numPeers := len(rf.peers)
     
-    myId := rf.me
+    for {
+        
 
-    committed := false
+        rf.mu.Lock()
+        numPeers := len(rf.peers)
     
-    var args = AppendEntriesArgs {
-        LeaderTerm : rf.currentTerm,
-        LeaderId: rf.me,
-        LastLogIndex: index,
-        LastLogTerm: term,
-        LogEntries: logEntries,
-        LeaderCommitIndex: rf.commitIndex,
-    }
-    rf.mu.Unlock()
+        myId := rf.me
 
-    successReplyCount:=0
-    receivedResponse []int
-    receivedResponse = append(receivedResponse,myId)
-
-    for id := 0; id < numPeers; id++ {
-        if (!find(receivedResponse,id))  {
-
-            go func(serverId int) {
-                var reply AppendEntriesReply
-                rf.sendAppendEntries(serverId, &args, &reply)
-                rf.CheckTerm(reply.CurrentTerm)
-
-                if(reply.Success){
-                    successReplyCount++
-                    receivedResponse = append(receivedResponse,serverId)
-                }
-            } (id)
+        committed := false
+    
+        var args = AppendEntriesArgs {
+            LeaderTerm : rf.currentTerm,
+            LeaderId: rf.me,
+            LastLogIndex: index,
+            LastLogTerm: term,
+            LogEntries: logEntries,
+            LeaderCommitIndex: rf.commitIndex,
         }
-        }
+        rf.mu.Unlock()
 
-        time.sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
+        successReplyCount :=0
+        var receivedResponse []int
+
+        receivedResponse = append(receivedResponse,myId)
+
+        for id := 0; id < numPeers; id++ {
+            fmt.Printf("\nAppend entry sending for peer %d\n",id)
+            if (!find(receivedResponse,id))  {
+                fmt.Printf("\nAppend entry actually sent for peer %d\n",id)
+
+                go func(serverId int) {
+                    var reply AppendEntriesReply
+                    fmt.Printf("\ngo routine sending RPC for peer %d\n",serverId)
+
+                    rf.sendAppendEntries(serverId, &args, &reply)
+                    rf.CheckTerm(reply.CurrentTerm)
+
+                    if(reply.Success){
+                        successReplyCount++
+                        receivedResponse = append(receivedResponse,serverId)
+                    }
+                } (id)
+            }
+        }
+        fmt.Printf("\nsleeping before counting success replies\n")
+
+        time.Sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
 
         if (successReplyCount == (numPeers)){
             return
@@ -509,26 +531,23 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
         if(!committed && successReplyCount>(numPeers/2)){
                 
-                go func(){
-                    var oneApplyMsg ApplyMsg
-                    oneApplyMsg.CommandValid = true
-                    oneApplyMsg.CommandIndex = (index+1)
-                    oneApplyMsg.Command = command
-                    committed = true
-                    applyCh <- oneApplyMsg
-
-                
-                
-
-                }
+            go func(){
+                var oneApplyMsg ApplyMsg
+                oneApplyMsg.CommandValid = true
+                oneApplyMsg.CommandIndex = (index+1)
+                oneApplyMsg.Command = command
+                committed = true
+                rf.commitIndex = rf.commitIndex +1      // Discuss: 3. should we use lock?
+                rf.applyCh <- oneApplyMsg
+            }()
         }
 
 
-
+    
     }
 
-}
 
+}()
     // Your code here (2B code).
     return (index+1), term, isLeader
 }
@@ -671,14 +690,20 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond)
                 
                 rf.mu.Lock()
+                fmt.Printf("leader debug 1: \n\n")
                 if rf.state != Follower {
+                    fmt.Printf("leader debug 2: \n\n")
+
                     if rf.gotHeartbeat  {
+                        fmt.Printf("leader debug 3: \n\n")
                         log.Fatal("Fatal Error: Have two leaders in the same term!!!")
                     }
                     fmt.Printf("   peer %d term %d --leader-- : I send periodic heartbeat.\n",rf.me, rf.currentTerm)
                     go rf.sendHeartbeats()
                 } 
                 rf.mu.Unlock()
+
+                fmt.Printf("leader debug 4: \n\n")
             }
         }
     } ()
