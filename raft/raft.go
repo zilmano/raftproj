@@ -255,6 +255,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
             reply.Success = false
         
         }
+
+        // Discuss: 4. Handle success case
         fmt.Printf("\nreturning from AppendEntry RPC\n")
 
         
@@ -454,7 +456,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
     if len(rf.log) > 0 {
         index = len(rf.log)-1
-        term = rf.log[index].Term // Discuss 2
+        term = rf.log[index].Term // Discuss 2. consider second or third call to Append RPC. if only first entry is committed,
+                                  // should the last index be 0 or 1/2
     }
     
     if(rf.state!=Leader){
@@ -690,12 +693,9 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond)
                 
                 rf.mu.Lock()
-                fmt.Printf("leader debug 1: \n\n")
                 if rf.state != Follower {
-                    fmt.Printf("leader debug 2: \n\n")
 
                     if rf.gotHeartbeat  {
-                        fmt.Printf("leader debug 3: \n\n")
                         log.Fatal("Fatal Error: Have two leaders in the same term!!!")
                     }
                     fmt.Printf("   peer %d term %d --leader-- : I send periodic heartbeat.\n",rf.me, rf.currentTerm)
@@ -703,7 +703,6 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 } 
                 rf.mu.Unlock()
 
-                fmt.Printf("leader debug 4: \n\n")
             }
         }
     } ()
