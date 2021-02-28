@@ -25,7 +25,6 @@ import "math/rand"
 import "fmt"
 import "time"
 import "log"
-
 // import "bytes"
 // import "../labgob"
 
@@ -217,7 +216,7 @@ type AppendEntriesReply struct {
     Success bool
 }
 
-func (rf *Raft) CheckTerm(peerTerm int) {
+func (rf *Raft) CheckTerm(peerTerm int) bool {
     rf.mu.Lock()
     defer rf.mu.Unlock()
     if rf.currentTerm < peerTerm {
@@ -225,7 +224,9 @@ func (rf *Raft) CheckTerm(peerTerm int) {
         rf.state = Follower
         rf.votedFor = -1
         rf.gotHeartbeat = false
+        return false
     } 
+    return true
 }
 
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
@@ -250,16 +251,52 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         
         
         fmt.Printf("\nchecking some false conditions. LastLogIndex of leader is %d and length of our log is %d\n",args.LastLogIndex,((len(rf.log)-1)))
-        if((args.LastLogIndex > -1) && (args.LastLogIndex >= (len(rf.log)-1) ) && (rf.log[args.LastLogIndex].Term != args.LastLogTerm )){
+        if((args.LastLogIndex > (len(rf.log)-1) )){
+            reply.Success = false
+            return
+        }
+
+    if((args.LastLogIndex == -1) && (args.LastLogIndex<len(rf.log)-1)){
+            reply.Success = false
+            return
+    }
+
+        if((args.LastLogIndex > -1) && (rf.log[args.LastLogIndex].Term != args.LastLogTerm )){
             fmt.Printf("\nsuccess set to false\n")
             reply.Success = false
+            return
         
         }
+        
+        joinIndex:=0
+
+        for id:=0;id<len(args.LogEntries);id++{
+           
+            followerLogIndex := id+args.LastLogIndex+1
+            if rf.log[followerLogIndex].Term !=args.LastLogTerm{
+                joinIndex = id
+                 rf.log = rf.log[0:followerLogIndex]
+                break
+            }
+        }
+
+        // Discuss: What would happen if the packets get lost. would RPC return false. clues.
 
         // Discuss: 4. Handle success case
         fmt.Printf("\nreturning from AppendEntry RPC\n")
-
         
+        reply.Success = true
+
+        if (args.LeaderCommitIndex > rf.commitIndex){
+            if(args.LeaderCommitIndex<len(rf.log)){
+                rf.commitIndex = (args.LeaderCommitIndex)
+            }else{
+                rf.commitIndex = len(rf.log)
+            }
+        }
+        
+        rf.log = append(rf.log,args.LogEntries[joinIndex:]...)
+
         
 
     }
@@ -356,14 +393,14 @@ func (rf *Raft) sendHeartbeats() {
     lastLogIndex := -1
     lastLogTerm := -1
     myId := rf.me
-    if len(rf.log) > 0 && (rf.commitIndex>-1){
+    if len(rf.log) > 0{
         /*
         lastLogIndex = numPeers-1
         fmt.Printf("\nNumber of peers is %d within sendHeartbeats\n",numPeers)  // Discuss 1
         lastLogTerm = rf.log[numPeers-1].Term 
         */
 
-        lastLogIndex = rf.commitIndex
+        lastLogIndex = len(rf.log)-1
         lastLogTerm = rf.log[lastLogIndex].Term
 
     }
@@ -453,11 +490,11 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     index := -1
     term := -1
     isLeader := true
+    rf.mu.Lock()
 
     if len(rf.log) > 0 {
         index = len(rf.log)-1
-        term = rf.log[index].Term // Discuss 2. consider second or third call to Append RPC. if only first entry is committed,
-                                  // should the last index be 0 or 1/2
+        term = rf.log[index].Term 
     }
     
     if(rf.state!=Leader){
@@ -468,21 +505,26 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     oneEntry.Command = command
     oneEntry.Term = rf.currentTerm
    
-
+    
     rf.log = append(rf.log,oneEntry)
+    rf.mu.Unlock()
+
     var logEntries []LogEntry
-    logEntries = append(logEntries,oneEntry)
+    logEntries = append(logEntries,rf.log[-1:]...)
 
     go func(){
     
     // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
     // for loop only iterates over the left peers.
  
-    
-    
-    for {
-        
+    var isLeader bool
+    isLeader :=true
 
+
+    
+    for (isLeader){
+
+        
         rf.mu.Lock()
         numPeers := len(rf.peers)
     
@@ -505,21 +547,31 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
         receivedResponse = append(receivedResponse,myId)
 
-        for id := 0; id < numPeers; id++ {
-            fmt.Printf("\nAppend entry sending for peer %d\n",id)
+        for id := 0; id < numPeers && isLeader; id++ {
+           
             if (!find(receivedResponse,id))  {
-                fmt.Printf("\nAppend entry actually sent for peer %d\n",id)
+
+                var logEntries []LogEntry
+
+                logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
+                args.LogEntries = logEntries
+
 
                 go func(serverId int) {
                     var reply AppendEntriesReply
-                    fmt.Printf("\ngo routine sending RPC for peer %d\n",serverId)
 
-                    rf.sendAppendEntries(serverId, &args, &reply)
-                    rf.CheckTerm(reply.CurrentTerm)
+                    ok:=rf.sendAppendEntries(serverId, &args, &reply)
+                    if(!rf.CheckTerm(reply.CurrentTerm)){
 
-                    if(reply.Success){
+                        isLeader=false
+
+                    }else if(reply.Success){
                         successReplyCount++
                         receivedResponse = append(receivedResponse,serverId)
+                        rf.matchIndex[id]=len(rf.log) -1 
+
+                    }else{
+                        rf.nextIndex[id] = rf.nextIndex[id] - 1 
                     }
                 } (id)
             }
@@ -540,9 +592,11 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                 oneApplyMsg.CommandIndex = (index+1)
                 oneApplyMsg.Command = command
                 committed = true
+                rf.mu.Lock()
                 rf.commitIndex = rf.commitIndex +1      // Discuss: 3. should we use lock?
                 rf.applyCh <- oneApplyMsg
-            }()
+                rf.mu.Unlock()
+      }()
         }
 
 
@@ -667,6 +721,11 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     }
 
                     if voteCount > numPeers/2 {
+                        
+                        for id:=0;id<(len(rf.peers)-1):id++{
+                            nextIndex[id]=rf.prevLogIndex
+                        }
+
                         fmt.Printf("-- peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
                         rf.state = Leader
                         fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
