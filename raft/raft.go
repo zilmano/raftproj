@@ -25,6 +25,7 @@ import "math/rand"
 import "fmt"
 import "time"
 import "log"
+import "math"
 // import "bytes"
 // import "../labgob"
 
@@ -96,7 +97,7 @@ type Raft struct {
     
 
     nextIndex []int
-    matchInex []int
+    matchIndex []int
 
     state PeerState
     gotHeartbeat bool
@@ -197,8 +198,8 @@ type AppendEntriesArgs struct {
     // Your data here (2A).
     LeaderTerm int
     LeaderId int
-    LastLogIndex int
-    LastLogTerm int
+    PrevLogIndex int
+    PrevLogTerm int
     LogEntries []LogEntry
     LeaderCommitIndex int
     
@@ -243,65 +244,61 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         rf.gotHeartbeat = true
     }
     
-    if(len(args.LogEntries)==1){
+    //if(len(args.LogEntries)==1){
 
-        if(args.LeaderTerm<rf.currentTerm){
-            reply.Success = false
-        }
-        
-        
-        fmt.Printf("\nchecking some false conditions. LastLogIndex of leader is %d and length of our log is %d\n",args.LastLogIndex,((len(rf.log)-1)))
-        if((args.LastLogIndex > (len(rf.log)-1) )){
-            reply.Success = false
-            return
-        }
-
-    if((args.LastLogIndex == -1) && (args.LastLogIndex<len(rf.log)-1)){
-            reply.Success = false
-            return
-    }
-
-        if((args.LastLogIndex > -1) && (rf.log[args.LastLogIndex].Term != args.LastLogTerm )){
-            fmt.Printf("\nsuccess set to false\n")
-            reply.Success = false
-            return
-        
-        }
-        
-        joinIndex:=0
-
-        for id:=0;id<len(args.LogEntries);id++{
-           
-            followerLogIndex := id+args.LastLogIndex+1
-            if rf.log[followerLogIndex].Term !=args.LastLogTerm{
-                joinIndex = id
-                 rf.log = rf.log[0:followerLogIndex]
-                break
-            }
-        }
-
-        // Discuss: What would happen if the packets get lost. would RPC return false. clues.
-
-        // Discuss: 4. Handle success case
-        fmt.Printf("\nreturning from AppendEntry RPC\n")
-        
-        reply.Success = true
-
-        if (args.LeaderCommitIndex > rf.commitIndex){
-            if(args.LeaderCommitIndex<len(rf.log)){
-                rf.commitIndex = (args.LeaderCommitIndex)
-            }else{
-                rf.commitIndex = len(rf.log)
-            }
-        }
-        
-        rf.log = append(rf.log,args.LogEntries[joinIndex:]...)
-
-        
-
+    if args.LeaderTerm < rf.currentTerm{
+        reply.Success=false
+        return 
     }
     
-}
+    rf.gotHeartbeat = true
+        
+    fmt.Printf("\nchecking some false conditions. LastLogIndex of leader is %d and length of our log is %d\n",args.PrevLogIndex,((len(rf.log)-1)))
+    if args.PrevLogIndex >= len(rf.log) {
+        reply.Success = false
+        return
+    }
+
+    if((args.PrevLogIndex > -1) && (rf.log[args.PrevLogIndex].Term != args.PrevLogTerm )){
+        fmt.Printf("\nsuccess set to false\n")
+        reply.Success = false
+        return
+    
+    }
+    
+    joinIndex := len(args.LogEntries)
+
+    var logIndex int
+    for index := 0; index < len(args.LogEntries); index++ {
+        logIndex = index + args.PrevLogIndex + 1
+        if  logIndex >= len(rf.log) {
+            joinIndex = index
+            break
+        } else if rf.log[logIndex].Term != args.LogEntries[index].Term {
+            joinIndex = index
+            rf.log = rf.log[0:logIndex]
+            break
+        }
+    }
+
+    rf.log = append(rf.log,args.LogEntries[joinIndex:]...)
+
+    // Discuss: What would happen if the packets get lost. would RPC return false. clues.
+
+    // Discuss: 4. Handle success case
+    fmt.Printf("\nreturning from AppendEntry RPC\n")
+    reply.Success = true
+
+    if (args.LeaderCommitIndex > rf.commitIndex){
+        if(args.LeaderCommitIndex<len(rf.log)){
+            rf.commitIndex = (args.LeaderCommitIndex)
+        } else {
+            rf.commitIndex = len(rf.log)-1
+        }
+    }
+ }
+
+
 
 //
 // example RequestVote RPC handler.
@@ -309,22 +306,21 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
     fmt.Printf("\n -> I the Peer %d in got Vote Request from cadidate %d!\n",rf.me, args.CandidateId)
     
-    rf.CheckTerm(args.CandidateTerm) 
     rf.mu.Lock()
     defer rf.mu.Unlock() // TODO: ask professor/TA about this atomisitc and if mutex is needed.
     
     reply.FollowerTerm = rf.currentTerm
     
+    rf.CheckTerm(args.CandidateTerm)     
+    
     // 2B code - fix if needed
     logUpToDate := false
     if len(rf.log) == 0 {
-        if args.LastLogIndex == -1 {
-            logUpToDate = true
-        }
-    } else if rf.log[len(rf.log)-1].Term > args.LastLogTerm {
+        logUpToDate = true
+    } else if rf.log[len(rf.log)-1].Term < args.LastLogTerm {
         logUpToDate = true
     } else if rf.log[len(rf.log)-1].Term  == args.LastLogTerm && 
-        len(rf.log) >= (args.LastLogIndex+1) {
+        len(rf.log) <= (args.LastLogIndex+1) {
         logUpToDate = true
     }
     // 2B code end
@@ -399,7 +395,6 @@ func (rf *Raft) sendHeartbeats() {
         fmt.Printf("\nNumber of peers is %d within sendHeartbeats\n",numPeers)  // Discuss 1
         lastLogTerm = rf.log[numPeers-1].Term 
         */
-
         lastLogIndex = len(rf.log)-1
         lastLogTerm = rf.log[lastLogIndex].Term
 
@@ -408,8 +403,8 @@ func (rf *Raft) sendHeartbeats() {
     var args = AppendEntriesArgs {
         LeaderTerm : rf.currentTerm,
         LeaderId: rf.me,
-        LastLogIndex: lastLogIndex,
-        LastLogTerm: lastLogTerm,
+        PrevLogIndex: lastLogIndex,
+        PrevLogTerm: lastLogTerm,
         //LogEntries: ...  Leave log entries empty for now for heartbeats.
     }
     rf.mu.Unlock()
@@ -487,126 +482,140 @@ func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
 // the leader.
 //
 func (rf *Raft) Start(command interface{}) (int, int, bool) {
-    index := -1
-    term := -1
+    lastLogIndex := 0
     isLeader := true
+    
+    // TODO WED: check corner cases with -1
     rf.mu.Lock()
-
+    term := rf.currentTerm
+    myId := rf.me
     if len(rf.log) > 0 {
-        index = len(rf.log)-1
-        term = rf.log[index].Term 
+        lastLogIndex = len(rf.log)
+        //term = rf.log[index].Term 
     }
     
-    if(rf.state!=Leader){
-        return index, rf.currentTerm, false
+    if rf.state != Leader || rf.killed() {
+        return lastLogIndex-1, term, false
     }
     
     var oneEntry LogEntry
     oneEntry.Command = command
-    oneEntry.Term = rf.currentTerm
-   
+    oneEntry.Term = term
     
-    rf.log = append(rf.log,oneEntry)
+    rf.log = append(rf.log, oneEntry)
     rf.mu.Unlock()
 
-    var logEntries []LogEntry
-    logEntries = append(logEntries,rf.log[-1:]...)
-
-    go func(){
     
-    // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
-    // for loop only iterates over the left peers.
- 
-    var isLeader bool
-    isLeader :=true
-
-
+    go func() {
     
-    for (isLeader){
-
+        // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
+        // the for loop inside only iterates over the left peers.
         
-        rf.mu.Lock()
-        numPeers := len(rf.peers)
-    
-        myId := rf.me
-
+        var localMu sync.Mutex
+        
+        isLeader := true
         committed := false
-    
-        var args = AppendEntriesArgs {
-            LeaderTerm : rf.currentTerm,
-            LeaderId: rf.me,
-            LastLogIndex: index,
-            LastLogTerm: term,
-            LogEntries: logEntries,
-            LeaderCommitIndex: rf.commitIndex,
-        }
-        rf.mu.Unlock()
-
-        successReplyCount :=0
+        successReplyCount := 0
         var receivedResponse []int
+        receivedResponse = append(receivedResponse, myId)
 
-        receivedResponse = append(receivedResponse,myId)
-
-        for id := 0; id < numPeers && isLeader; id++ {
-           
-            if (!find(receivedResponse,id))  {
-
-                var logEntries []LogEntry
-
-                logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
-                args.LogEntries = logEntries
-
-
-                go func(serverId int) {
-                    var reply AppendEntriesReply
-
-                    ok:=rf.sendAppendEntries(serverId, &args, &reply)
-                    if(!rf.CheckTerm(reply.CurrentTerm)){
-
-                        isLeader=false
-
-                    }else if(reply.Success){
-                        successReplyCount++
-                        receivedResponse = append(receivedResponse,serverId)
-                        rf.matchIndex[id]=len(rf.log) -1 
-
-                    }else{
-                        rf.nextIndex[id] = rf.nextIndex[id] - 1 
-                    }
-                } (id)
+        for isLeader {
+            if rf.killed() {
+                    fmt.Printf("*** Peer %d term %d: Terminated. Closing all outstanding Append Entries calls to followers.",myId, term)
+                    return 
             }
-        }
-        fmt.Printf("\nsleeping before counting success replies\n")
 
-        time.Sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
+            var args = AppendEntriesArgs {
+                LeaderId: myId,
+            }
+            rf.mu.Lock()
+            numPeers := len(rf.peers)
+            rf.mu.Unlock()
 
-        if (successReplyCount == (numPeers)){
-            return
-        }
-
-        if(!committed && successReplyCount>(numPeers/2)){
+            for id := 0; id < numPeers && isLeader; id++ {
+                if (!find(receivedResponse,id))  {
+                    if lastLogIndex < rf.nextIndex[id] {
+                        successReplyCount++
+                        receivedResponse = append(receivedResponse,id)
+                        continue
+                    }
+                    var logEntries []LogEntry
+                    logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
+                    args.LogEntries = logEntries
+                    args.PrevLogTerm = rf.log[rf.nextIndex[id]-1].Term
+                    args.PrevLogIndex = rf.nextIndex[id]-1
+                    args.LeaderTerm = rf.currentTerm
+                    args.LeaderCommitIndex = rf.commitIndex
                 
-            go func(){
-                var oneApplyMsg ApplyMsg
-                oneApplyMsg.CommandValid = true
-                oneApplyMsg.CommandIndex = (index+1)
-                oneApplyMsg.Command = command
-                committed = true
+                    go func(serverId int) {
+                        var reply AppendEntriesReply
+                        ok:=rf.sendAppendEntries(serverId, &args, &reply)
+                        if !rf.CheckTerm(reply.CurrentTerm) {
+                            localMu.Lock()
+                            isLeader=false
+                            localMu.Unlock()
+                        } else if reply.Success && ok {
+                            localMu.Lock()
+                            successReplyCount++
+                            receivedResponse = append(receivedResponse,serverId)
+                            localMu.Unlock()
+                            rf.mu.Lock()
+                            if lastLogIndex >= rf.nextIndex[id] {
+                                rf.matchIndex[id]= lastLogIndex
+                                rf.nextIndex[id] = lastLogIndex + 1
+                            }
+                            rf.mu.Unlock()
+                        } else {
+                            rf.mu.Lock()
+                            rf.nextIndex[id]-- 
+                            rf.mu.Unlock()
+                        }
+                    } (id)
+                }
+            }
+            
+            fmt.Printf("\nsleeping before counting success replies\n")
+            time.Sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
+
+            if !committed  && isLeader {
+                votesForIndex := 0
+                N :=  math.MaxInt32
                 rf.mu.Lock()
-                rf.commitIndex = rf.commitIndex +1      // Discuss: 3. should we use lock?
-                rf.applyCh <- oneApplyMsg
+                for i := 0; i < numPeers; i++ {
+                    if rf.matchIndex[i] > rf.commitIndex {
+                        if rf.matchIndex[i] < N {
+                            N = rf.matchIndex[i]
+                        }
+                        votesForIndex++
+                    }
+                }
                 rf.mu.Unlock()
-      }()
+
+
+                if (votesForIndex > (numPeers/2)){ 
+                    go func(){
+                        committed = true
+                        rf.mu.Lock()
+                        rf.commitIndex = N     // Discuss: 3. should we use lock?
+                        rf.log[N].Term = rf.currentTerm
+                        if rf.commitIndex >= lastLogIndex {
+                            var oneApplyMsg ApplyMsg
+                            oneApplyMsg.CommandValid = true
+                            oneApplyMsg.CommandIndex = lastLogIndex
+                            oneApplyMsg.Command = command
+                            go func() {rf.applyCh <- oneApplyMsg} ()
+                        }
+                        rf.mu.Unlock()
+                    }()
+                }
+            } else if successReplyCount == numPeers {
+                return
+            }  
         }
-
-
+    } ()
     
-    }
-
-
-}()
     // Your code here (2B code).
-    return (index+1), term, isLeader
+    return lastLogIndex, term, isLeader
 }
 
 //
@@ -721,9 +730,10 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     }
 
                     if voteCount > numPeers/2 {
-                        
-                        for id:=0;id<(len(rf.peers)-1):id++{
-                            nextIndex[id]=rf.prevLogIndex
+                        // Initialize leader nextIndex and match index
+                        for id:=0; id< (len(rf.peers)-1); id++{
+                            rf.nextIndex[id] = len(rf.log)
+                            rf.matchIndex[id] = 0
                         }
 
                         fmt.Printf("-- peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
