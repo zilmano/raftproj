@@ -96,7 +96,7 @@ type Raft struct {
     
 
     nextIndex []int
-    matchInex []int
+    matchIndex []int
 
     state PeerState
     gotHeartbeat bool
@@ -197,8 +197,8 @@ type AppendEntriesArgs struct {
     // Your data here (2A).
     LeaderTerm int
     LeaderId int
-    LastLogIndex int
-    LastLogTerm int
+    PrevLogIndex int
+    PrevLogTerm int
     LogEntries []LogEntry
     LeaderCommitIndex int
     
@@ -250,36 +250,33 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         }
         
         
-        fmt.Printf("\nchecking some false conditions. LastLogIndex of leader is %d and length of our log is %d\n",args.LastLogIndex,((len(rf.log)-1)))
-        if((args.LastLogIndex > (len(rf.log)-1) )){
+        fmt.Printf("\nchecking some false conditions. LastLogIndex of leader is %d and length of our log is %d\n",args.PrevLogIndex,((len(rf.log)-1)))
+        if((args.PrevLogIndex > (len(rf.log)-1) )){
             reply.Success = false
             return
         }
 
-    if((args.LastLogIndex == -1) && (args.LastLogIndex<len(rf.log)-1)){
+    if((args.PrevLogIndex == -1) && (args.PrevLogIndex<len(rf.log)-1)){
             reply.Success = false
             return
     }
 
-        if((args.LastLogIndex > -1) && (rf.log[args.LastLogIndex].Term != args.LastLogTerm )){
+        if((args.PrevLogIndex > -1) && (rf.log[args.PrevLogIndex].Term != args.PrevLogTerm )){
             fmt.Printf("\nsuccess set to false\n")
             reply.Success = false
             return
         
         }
+
+                 // CHANGE: Make sure terms match and then
+                                                                        // simply append
+
+        rf.log = rf.log[0:args.PrevLogIndex+1]
+        rf.log = append(rf.log,args.LogEntries...)
+
         
-        joinIndex:=0
-
-        for id:=0;id<len(args.LogEntries);id++{
-           
-            followerLogIndex := id+args.LastLogIndex+1
-            if rf.log[followerLogIndex].Term !=args.LastLogTerm{
-                joinIndex = id
-                 rf.log = rf.log[0:followerLogIndex]
-                break
-            }
-        }
-
+        
+   
         // Discuss: What would happen if the packets get lost. would RPC return false. clues.
 
         // Discuss: 4. Handle success case
@@ -295,7 +292,6 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
             }
         }
         
-        rf.log = append(rf.log,args.LogEntries[joinIndex:]...)
 
         
 
@@ -390,8 +386,8 @@ func (rf *Raft) sendHeartbeats() {
     numPeers := len(rf.peers)
     
     // 2B code start - change if needed
-    lastLogIndex := -1
-    lastLogTerm := -1
+    prevLogIndex := -1
+    prevLogTerm := -1
     myId := rf.me
     if len(rf.log) > 0{
         /*
@@ -400,16 +396,16 @@ func (rf *Raft) sendHeartbeats() {
         lastLogTerm = rf.log[numPeers-1].Term 
         */
 
-        lastLogIndex = len(rf.log)-1
-        lastLogTerm = rf.log[lastLogIndex].Term
+        prevLogIndex = len(rf.log)-1
+        prevLogTerm = rf.log[prevLogIndex].Term
 
     }
     
     var args = AppendEntriesArgs {
         LeaderTerm : rf.currentTerm,
         LeaderId: rf.me,
-        LastLogIndex: lastLogIndex,
-        LastLogTerm: lastLogTerm,
+        PrevLogIndex: prevLogIndex,
+        PrevLogTerm: prevLogTerm,
         //LogEntries: ...  Leave log entries empty for now for heartbeats.
     }
     rf.mu.Unlock()
@@ -510,7 +506,6 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     rf.mu.Unlock()
 
     var logEntries []LogEntry
-    logEntries = append(logEntries,rf.log[-1:]...)
 
     go func(){
     
@@ -518,7 +513,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     // for loop only iterates over the left peers.
  
     var isLeader bool
-    isLeader :=true
+    isLeader = true
 
 
     
@@ -535,8 +530,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
         var args = AppendEntriesArgs {
             LeaderTerm : rf.currentTerm,
             LeaderId: rf.me,
-            LastLogIndex: index,
-            LastLogTerm: term,
+            PrevLogIndex: index,
+            PrevLogTerm: term,
             LogEntries: logEntries,
             LeaderCommitIndex: rf.commitIndex,
         }
@@ -555,12 +550,16 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
                 logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
                 args.LogEntries = logEntries
+                
+                PrevLogIndex := rf.nextIndex[id] - 1             // CHANGE: last log index and term would depend on nextIndex
+                args.PrevLogIndex =  PrevLogIndex
+                args.PrevLogTerm = rf.log[PrevLogIndex].Term
 
 
                 go func(serverId int) {
                     var reply AppendEntriesReply
 
-                    ok:=rf.sendAppendEntries(serverId, &args, &reply)
+                    rf.sendAppendEntries(serverId, &args, &reply)
                     if(!rf.CheckTerm(reply.CurrentTerm)){
 
                         isLeader=false
@@ -569,6 +568,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                         successReplyCount++
                         receivedResponse = append(receivedResponse,serverId)
                         rf.matchIndex[id]=len(rf.log) -1 
+                        rf.nextIndex[id] = len(rf.log)                      // CHANGE: update the next Index after success
 
                     }else{
                         rf.nextIndex[id] = rf.nextIndex[id] - 1 
@@ -722,8 +722,8 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
                     if voteCount > numPeers/2 {
                         
-                        for id:=0;id<(len(rf.peers)-1):id++{
-                            nextIndex[id]=rf.prevLogIndex
+                        for id:=0;id<(len(rf.peers)-1);id++{
+                            rf.nextIndex[id]=len(rf.log)           // CHANGE: it should be start of new log
                         }
 
                         fmt.Printf("-- peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
