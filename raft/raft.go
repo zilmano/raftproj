@@ -44,8 +44,6 @@ import "math"
 //
 
 
-
-
 const RANDOM_TIMER_MAX = 600 // max value in ms
 const RANDOM_TIMER_MIN = 300 // max value in ms
 const HEARTBEAT_RATE = 5.0 // in hz, n beats a second
@@ -234,8 +232,6 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
     // TODO: Ask professor/TA if we need a lock here, as all the appendEntries set the heartbeat to 'true'
     //       so maybe technically we don't need it?
-
-
     fmt.Printf("Peer %d term %d: Got heartbeat from leader %d\n",rf.me, rf.currentTerm, args.LeaderId)
     rf.CheckTerm(args.LeaderTerm)
     rf.mu.Lock()
@@ -306,13 +302,11 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
     fmt.Printf("\n -> I the Peer %d in got Vote Request from cadidate %d!\n",rf.me, args.CandidateId)
     
+    rf.CheckTerm(args.CandidateTerm)     
     rf.mu.Lock()
     defer rf.mu.Unlock() // TODO: ask professor/TA about this atomisitc and if mutex is needed.
     
     reply.FollowerTerm = rf.currentTerm
-    
-    rf.CheckTerm(args.CandidateTerm)     
-    
     // 2B code - fix if needed
     logUpToDate := false
     if len(rf.log) == 0 {
@@ -562,7 +556,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             rf.mu.Lock()
                             if lastLogIndex >= rf.nextIndex[id] {
                                 rf.matchIndex[id]= lastLogIndex
-                                rf.nextIndex[id] = lastLogIndex + 1
+                                // TODO: Ask the Prof about the correctness of this.
+                                rf.nextIndex[id] = lastLogIndex + 1 // len(rf.log())
                             }
                             rf.mu.Unlock()
                         } else {
@@ -587,6 +582,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             N = rf.matchIndex[i]
                         }
                         votesForIndex++
+                        // TODO: Add the id of peers with match indexes bigger then lastLogIndex
+                        //       To recievedResponse[]? 
                     }
                 }
                 rf.mu.Unlock()
@@ -667,6 +664,13 @@ func Make(peers []*labrpc.ClientEnd, me int,
     rf.lastApplied = -1
     rf.state = Follower
     rf.gotHeartbeat = false
+
+    rf.nextIndex = make([]int, len(rf.peers))
+    rf.matchIndex = make([]int, len(rf.peers))
+    for id := 0; id < len(rf.peers); id++ {
+        rf.nextIndex[id] = 0
+        rf.matchIndex[id] = 0
+    }
 
     // initialize from state persisted before a crash
     rf.readPersist(persister.ReadRaftState())
