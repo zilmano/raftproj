@@ -231,7 +231,8 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
 func (rf *Raft) ApplyChannel(commandIndex int, command interface{}) {
     var oneApplyMsg ApplyMsg
     oneApplyMsg.CommandValid = true
-    oneApplyMsg.CommandIndex = commandIndex
+    // Yaikes! Tester expects the log to start from index 1, while we start from index 0., need to increase +1
+    oneApplyMsg.CommandIndex = commandIndex+1
     oneApplyMsg.Command = command
     go func() {rf.applyCh <- oneApplyMsg} ()
 }
@@ -637,7 +638,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     } ()
     
     // Your code here (2B code).
-    return lastLogIndex, term, isLeader
+    return lastLogIndex+1, term, isLeader
 }
 
 //
