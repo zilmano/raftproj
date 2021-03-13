@@ -285,6 +285,15 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
     return true
 }
 
+func (rf *Raft) ApplyChannel(commandIndex int, command interface{}) {
+    var oneApplyMsg ApplyMsg
+    oneApplyMsg.CommandValid = true
+    // Yaikes! Tester expects the log to start from index 1, while we start from index 0., need to increase +1
+    oneApplyMsg.CommandIndex = commandIndex+1
+    oneApplyMsg.Command = command
+    go func() {rf.applyCh <- oneApplyMsg} ()
+}
+
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
     
     // TODO: Ask professor/TA if we need a lock here, as all the appendEntries set the heartbeat to 'true'
@@ -334,7 +343,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         }
     }
 
-    rf.log = append(rf.log,args.LogEntries[joinIndex:]...)
+    rf.log = append(rf.log, args.LogEntries[joinIndex:]...)
 
     persist() // Saving state
 
@@ -350,6 +359,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         } else {
             rf.commitIndex = len(rf.log)-1
         }
+        fmt.Printf("Follower comming to log\n")
+        rf.ApplyChannel(rf.commitIndex, rf.log[rf.commitIndex].Command)
     }
  }
 
@@ -457,6 +468,7 @@ func (rf *Raft) sendHeartbeats() {
     var args = AppendEntriesArgs {
         LeaderTerm : rf.currentTerm,
         LeaderId: rf.me,
+        LeaderCommitIndex: rf.commitIndex,
         PrevLogIndex: lastLogIndex,
         PrevLogTerm: lastLogTerm,
         //LogEntries: ...  Leave log entries empty for now for heartbeats.
@@ -549,6 +561,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     }
     
     if rf.state != Leader || rf.killed() {
+        fmt.Printf("Peer %d  is not valid Leader. Exiting/ \n", rf.me)
+        rf.mu.Unlock()
         return lastLogIndex-1, term, false
     }
     
@@ -574,9 +588,11 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
         var receivedResponse []int
         receivedResponse = append(receivedResponse, myId)
 
+        fmt.Printf("Adding command %d. Leader new log size: %d\n",command , len(rf.log))
+                    
         for isLeader {
             if rf.killed() {
-                    fmt.Printf("*** Peer %d term %d: Terminated. Closing all outstanding Append Entries calls to followers.",myId, term)
+                    fmt.Printf("*** Peer %d term %d: Terminated. Closing all outstanding Append Entries calls to followers.\n", myId, term)
                     return 
             }
 
@@ -588,7 +604,10 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
             rf.mu.Unlock()
 
             for id := 0; id < numPeers && isLeader; id++ {
-                if (!find(receivedResponse,id))  {
+                //fmt.Printf("DBG::id %d recievedResponse %v",id , receivedResponse)
+                if (!find(receivedResponse, id))  {
+                    //fmt.Printf("Sending AppendEntries to peer %d\n", id) 
+                    //fmt.Printf("DBG::lastLogIndex %d rf.nextIndex[%d] %d\n",lastLogIndex ,id, rf.nextIndex[id])
                     if lastLogIndex < rf.nextIndex[id] {
                         successReplyCount++
                         receivedResponse = append(receivedResponse,id)
@@ -597,7 +616,12 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                     var logEntries []LogEntry
                     logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
                     args.LogEntries = logEntries
-                    args.PrevLogTerm = rf.log[rf.nextIndex[id]-1].Term
+                    fmt.Printf("Log entries to send to peer %d: %v\n", id, logEntries)
+                    if rf.nextIndex[id] == 0 {
+                        args.PrevLogTerm = 0
+                    }else {
+                        args.PrevLogTerm = rf.log[rf.nextIndex[id]-1].Term
+                    }
                     args.PrevLogIndex = rf.nextIndex[id]-1
                     args.LeaderTerm = rf.currentTerm
                     args.LeaderCommitIndex = rf.commitIndex
@@ -615,15 +639,16 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             receivedResponse = append(receivedResponse,serverId)
                             localMu.Unlock()
                             rf.mu.Lock()
-                            if lastLogIndex >= rf.nextIndex[id] {
-                                rf.matchIndex[id]= lastLogIndex
+                            if lastLogIndex >= rf.nextIndex[serverId] {
+                                rf.matchIndex[serverId]= lastLogIndex
                                 // TODO: Ask the Prof about the correctness of this.
-                                rf.nextIndex[id] = lastLogIndex + 1 // len(rf.log())
+                                rf.nextIndex[serverId] = lastLogIndex + 1 // len(rf.log())
                             }
+                            fmt.Printf("Recieve successReply AppendEntry for peer %d \n", serverId)
                             rf.mu.Unlock()
                         } else {
                             rf.mu.Lock()
-                            rf.nextIndex[id]-- 
+                            rf.nextIndex[serverId]-- 
                             rf.mu.Unlock()
                         }
                     } (id)
@@ -634,10 +659,12 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
             time.Sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
 
             if !committed  && isLeader {
+                fmt.Printf("Counting votes...")
                 votesForIndex := 0
                 N :=  math.MaxInt32
                 rf.mu.Lock()
                 for i := 0; i < numPeers; i++ {
+                    fmt.Printf("DBG::votecount id:%d matchIndex %d\n", i, rf.matchIndex[i])
                     if rf.matchIndex[i] > rf.commitIndex {
                         if rf.matchIndex[i] < N {
                             N = rf.matchIndex[i]
@@ -647,33 +674,32 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                         //       To recievedResponse[]? 
                     }
                 }
+                fmt.Printf("Votes counted %d min commit index %d\n", votesForIndex, N)
                 rf.mu.Unlock()
 
 
                 if (votesForIndex > (numPeers/2)){ 
+                    fmt.Printf("Commiting entry as there is enough votes.\n")
                     go func(){
                         committed = true
                         rf.mu.Lock()
                         rf.commitIndex = N     // Discuss: 3. should we use lock?
                         rf.log[N].Term = rf.currentTerm
                         if rf.commitIndex >= lastLogIndex {
-                            var oneApplyMsg ApplyMsg
-                            oneApplyMsg.CommandValid = true
-                            oneApplyMsg.CommandIndex = lastLogIndex
-                            oneApplyMsg.Command = command
-                            go func() {rf.applyCh <- oneApplyMsg} ()
+                            rf.ApplyChannel(lastLogIndex, command)
                         }
                         rf.mu.Unlock()
                     }()
                 }
-            } else if successReplyCount == numPeers {
+            } else if successReplyCount == numPeers-1 {
+                fmt.Printf("Got confirmation from all peers that we are good. Killing this start.\n")
                 return
             }  
         }
     } ()
     
     // Your code here (2B code).
-    return lastLogIndex, term, isLeader
+    return lastLogIndex+1, term, isLeader
 }
 
 //
@@ -735,6 +761,8 @@ func Make(peers []*labrpc.ClientEnd, me int,
         rf.matchIndex[id] = 0
     }
 
+    fmt.Printf("Finish 'Making' peer %d...\n", rf.me)
+
     // initialize from state persisted before a crash
     rf.readPersist(persister.ReadRaftState())
 
@@ -748,13 +776,15 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 return 
             }
             
+            
+            fmt.Printf("-- Peer %d term %d, waiting to aquire lock on state.\n",rf.me, rf.currentTerm)
             rf.mu.Lock()
             state := rf.state
             rf.mu.Unlock()
             
             switch state {
             case Follower:
-                fmt.Printf("-- peer %d term %d, status update:  I am follolwer.\n",rf.me, rf.currentTerm)
+                fmt.Printf("-- Peer %d term %d, status update:  I am follolwer.\n",rf.me, rf.currentTerm)
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
                 fmt.Printf("   peer %d  term %d -- follower -- : Set election timer to time %f\n", rf.me, rf.currentTerm, snoozeTime)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
@@ -774,6 +804,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.currentTerm++
                 persist() // Saving state
                 fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
+
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 rf.votedFor = rf.me
                 persist() // Saving state
@@ -805,7 +836,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                             rf.matchIndex[id] = 0
                         }
 
-                        fmt.Printf("-- peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
+                        fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
                         rf.state = Leader
                         fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
                         go rf.sendHeartbeats()
@@ -814,10 +845,10 @@ func Make(peers []*labrpc.ClientEnd, me int,
                             log.Fatal("Two leaders won election in the same term!")
                         }
                     } else if rf.gotHeartbeat {
-                        fmt.Printf("-- peer %d candidate of term %d: I got heartbeat from a leader. So I step down :) \n",rf.me, rf.currentTerm)
+                        fmt.Printf("   peer %d candidate of term %d: I got heartbeat from a leader. So I step down :) \n",rf.me, rf.currentTerm)
                         rf.state = Follower
                     } else {
-                        fmt.Printf("-- peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
+                        fmt.Printf("   peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
                     }  
                 } 
                 rf.mu.Unlock()
