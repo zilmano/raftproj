@@ -20,13 +20,13 @@ package raft
 import "sync"
 import "sync/atomic"
 import "github.com/zilmano/raftproj/labrpc"
-
+import "github.com/zilmano/raftproj/labgob"
 import "math/rand"
 import "fmt"
 import "time"
 import "log"
 import "math"
-// import "bytes"
+import "bytes"
 // import "../labgob"
 
 
@@ -143,27 +143,26 @@ func (rf *Raft) persist() {
 
     // Your code here (2C).
     /*byte_array := new(bytes.Buffer)
-    encoder := labgob.NewEncoder(byte_array)
 
+    encoder := labgob.NewEncoder(byte_array)
     encoder.Encode(rf.currentTerm)
     encoder.Encode(rf.votedFor)
+ 
+   //  rf.mu.Lock()            //Should we use lock over entire function?
+   //  defer rf.mu.Unlock()
+   log := rf.log
+   log_length := len(log)
+     
+   //  rf.mu.Unlock()
+   for index := 0; index < log_length; index++ {
+       encoder.Encode(log[index])
+       encoder.Encode(log[index])
+   }
+   encoded_array := byte_array.Bytes()
+   rf.persister.SaveRaftState(encoded_array)
 
-    rf.mu.Lock()            //Should we use lock over entire function?
-    
-    log := rf.log
-    log_length := len(log)
-    
-    rf.mu.Unlock()
 
-    for index := 0; index < log_length; index++ {
-        encoder.Encode(log[index])
-        encoder.Encode(log[index])
-
-    }
-    
-    encoded_array := byte_array.Bytes()
-    rf.persister.SaveRaftState(encoded_array)
-
+    // Your code here (2C).
     // Example:
     // w := new(bytes.Buffer)
     // e := labgob.NewEncoder(w)
@@ -187,34 +186,29 @@ func (rf *Raft) readPersist(data []byte) {
 
     encoded_array := bytes.NewBuffer(data)
     decoder := labgob.NewDecoder(encoded_array)
-
-    var currentTerm int         //Do we need to provide type? - YES!
+ 
+    var currentTerm int         //Do we need to provide type?
     var votedFor int
-
+    
     if (decoder.Decode(&currentTerm) != nil || decoder.Decode(&votedFor) != nil ){
-
-
+                        
+                        
+                            
     }else{
         rf.currentTerm = currentTerm
         rf.votedFor = votedFor
+                                              
     }
-
-    for {
-        var logEntry LogEntry          // Do we need to store decoded data as command and Term?
-
+                    
+    for{
+        var logEntry = LogEntry {}                // Do we need to store decoded data as command and Term?
         if (decoder.Decode(&logEntry) != nil ){
-
             break // is it correct to break after first nil?
-
         }else{
-
             rf.log = append(rf.log,logEntry)
-            
         }
+                                                  
     }
-
-
-
 
     // Example:
     // r := bytes.NewBuffer(data)
@@ -837,6 +831,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
             case Candidate:
                 rf.mu.Lock()
                 rf.currentTerm++
+
                 rf.persist() // Saving state
                 fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
 
