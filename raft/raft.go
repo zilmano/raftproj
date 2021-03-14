@@ -45,7 +45,7 @@ import "math"
 
 
 const RANDOM_TIMER_MAX = 600 // max value in ms
-const RANDOM_TIMER_MIN = 300 // max value in ms
+const RANDOM_TIMER_MIN = 200 // max value in ms
 const HEARTBEAT_RATE = 5.0 // in hz, n beats a second
 
 type ApplyMsg struct {
@@ -722,6 +722,13 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                 fmt.Printf("START %d:Got confirmation from all peers that we are good. Killing this start.\n", command)
                 return
             }
+
+            rf.mu.Lock()
+            if lastLogIndex < len(rf.log)-1 {
+                rf.mu.Unlock()
+                return
+            }
+            rf.mu.Unlock()
 
         }
     } ()
