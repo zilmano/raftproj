@@ -228,13 +228,17 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
     return true
 }
 
-func (rf *Raft) ApplyChannel(commandIndex int, command interface{}) {
-    var oneApplyMsg ApplyMsg
-    oneApplyMsg.CommandValid = true
-    // Yaikes! Tester expects the log to start from index 1, while we start from index 0., need to increase +1
-    oneApplyMsg.CommandIndex = commandIndex+1
-    oneApplyMsg.Command = command
-    go func() {rf.applyCh <- oneApplyMsg} ()
+func (rf *Raft) ApplyChannel(commandIndex int, prevCommitIndex int) {
+    fmt.Printf("DBG::AppyChannel::peer %d: prevCommitIndex %d currCommitIndex %d\n", rf.me, prevCommitIndex, commandIndex)
+    for commitIndex := prevCommitIndex+1; commitIndex <= commandIndex; commitIndex++ { 
+        var oneApplyMsg ApplyMsg
+        oneApplyMsg.CommandValid = true
+        // Yaikes! Tester expects the log to start from index 1, while we start from index 0., need to increase +1
+        oneApplyMsg.CommandIndex = commitIndex+1
+        fmt.Printf("DBG::AppyChannel::peer %d: ApplyMsg %d\n", rf.me, oneApplyMsg.CommandIndex)
+        oneApplyMsg.Command = rf.log[commitIndex].Command
+        rf.applyCh <- oneApplyMsg
+    }
 }
 
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
@@ -245,6 +249,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     rf.CheckTerm(args.LeaderTerm)
     rf.mu.Lock()
     defer rf.mu.Unlock()
+    
+    reply.CurrentTerm = rf.currentTerm
     if rf.currentTerm == args.LeaderTerm {
         rf.gotHeartbeat = true
     }
@@ -258,7 +264,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
     rf.gotHeartbeat = true
         
-    fmt.Printf("\nchecking some false conditions. LastLogIndex of leader is %d and length of our log is %d\n",args.PrevLogIndex,((len(rf.log)-1)))
+    fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d\n",args.PrevLogIndex,((len(rf.log))))
     if args.PrevLogIndex >= len(rf.log) {
         reply.Success = false
         return
@@ -291,9 +297,10 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     // Discuss: What would happen if the packets get lost. would RPC return false. clues.
 
     // Discuss: 4. Handle success case
-    fmt.Printf("\nreturning from AppendEntry RPC\n")
+    fmt.Printf("Returning from AppendEntry RPC\n")
     reply.Success = true
 
+    prevCommitIndex := rf.commitIndex
     if (args.LeaderCommitIndex > rf.commitIndex){
         if(args.LeaderCommitIndex<len(rf.log)){
             rf.commitIndex = (args.LeaderCommitIndex)
@@ -301,7 +308,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
             rf.commitIndex = len(rf.log)-1
         }
         fmt.Printf("Follower comming to log\n")
-        rf.ApplyChannel(rf.commitIndex, rf.log[rf.commitIndex].Command)
+        rf.ApplyChannel(rf.commitIndex, prevCommitIndex)
     }
  }
 
@@ -489,7 +496,6 @@ func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
 //
 func (rf *Raft) Start(command interface{}) (int, int, bool) {
     lastLogIndex := 0
-    isLeader := true
     
     // TODO WED: check corner cases with -1
     rf.mu.Lock()
@@ -519,17 +525,14 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
         // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
         // the for loop inside only iterates over the left peers.
         
-        var localMu sync.Mutex
-        
-        isLeader := true
         committed := false
         successReplyCount := 0
         var receivedResponse []int
         receivedResponse = append(receivedResponse, myId)
 
-        fmt.Printf("Adding command %d. Leader new log size: %d\n",command , len(rf.log))
+        fmt.Printf("START %d: Adding command %d. Leader new log size: %d\n", command, command , len(rf.log))
                     
-        for isLeader {
+        for true {
             if rf.killed() {
                     fmt.Printf("*** Peer %d term %d: Terminated. Closing all outstanding Append Entries calls to followers.\n", myId, term)
                     return 
@@ -542,68 +545,86 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
             numPeers := len(rf.peers)
             rf.mu.Unlock()
 
-            for id := 0; id < numPeers && isLeader; id++ {
+            for id := 0; id < numPeers; id++ {
                 //fmt.Printf("DBG::id %d recievedResponse %v",id , receivedResponse)
                 if (!find(receivedResponse, id))  {
-                    //fmt.Printf("Sending AppendEntries to peer %d\n", id) 
-                    //fmt.Printf("DBG::lastLogIndex %d rf.nextIndex[%d] %d\n",lastLogIndex ,id, rf.nextIndex[id])
+                    fmt.Printf("START %d: Sending AppendEntries to peer %d\n", command, id) 
+                    fmt.Printf("DBG::lastLogIndex %d rf.nextIndex[%d] %d\n",lastLogIndex ,id, rf.nextIndex[id])
                     if lastLogIndex < rf.nextIndex[id] {
                         successReplyCount++
                         receivedResponse = append(receivedResponse,id)
                         continue
                     }
                     var logEntries []LogEntry
-                    logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
+                    // TODO: you can prob remove the append to logEntries and assign directly, is logEntries is empty
+                    if (rf.nextIndex[id] == -1) {
+                        logEntries = append(logEntries, rf.log...)
+                    } else {
+                        logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
+                    }
                     args.LogEntries = logEntries
-                    fmt.Printf("Log entries to send to peer %d: %v\n", id, logEntries)
+                    fmt.Printf("START %d: Log entries to send to peer %d: %v\n", command, id, logEntries)
                     if rf.nextIndex[id] == 0 {
                         args.PrevLogTerm = 0
                     }else {
                         args.PrevLogTerm = rf.log[rf.nextIndex[id]-1].Term
                     }
                     args.PrevLogIndex = rf.nextIndex[id]-1
-                    args.LeaderTerm = rf.currentTerm
+                    args.LeaderTerm = term
                     args.LeaderCommitIndex = rf.commitIndex
                 
                     go func(serverId int) {
+                        
                         var reply AppendEntriesReply
                         ok:=rf.sendAppendEntries(serverId, &args, &reply)
-                        if !rf.CheckTerm(reply.CurrentTerm) {
-                            localMu.Lock()
-                            isLeader=false
-                            localMu.Unlock()
-                        } else if reply.Success && ok {
-                            localMu.Lock()
+                        
+                        if !ok {
+                           fmt.Printf("START %d: Append entries to peer %d wasn't delivered. Will retry.", command, serverId)
+                        } else if !rf.CheckTerm(reply.CurrentTerm) || term < reply.CurrentTerm {
+                            fmt.Printf("START %d: Oooh. I am not the current Leader any more peer %d. I got a reply from someone with a higher term!!\n", command, rf.me)
+                            return 
+                        } else if reply.Success {
                             successReplyCount++
                             receivedResponse = append(receivedResponse,serverId)
-                            localMu.Unlock()
                             rf.mu.Lock()
                             if lastLogIndex >= rf.nextIndex[serverId] {
                                 rf.matchIndex[serverId]= lastLogIndex
+                                rf.matchIndex[rf.me] = lastLogIndex
                                 // TODO: Ask the Prof about the correctness of this.
                                 rf.nextIndex[serverId] = lastLogIndex + 1 // len(rf.log())
                             }
-                            fmt.Printf("Recieve successReply AppendEntry for peer %d \n", serverId)
+                            fmt.Printf("START %d: Recieve successReply AppendEntry for peer %d \n", command, serverId)
                             rf.mu.Unlock()
-                        } else {
+                        // TODO: That was a cool bug here, with nextIndex being decremented when the message is not delivered
+                        } else  {
+                            fmt.Printf("START %d: Append entries to peer %d failed. Decrease nextIndex.", command, serverId)
                             rf.mu.Lock()
-                            rf.nextIndex[serverId]-- 
+                            if rf.nextIndex[serverId] != 0 {
+                                rf.nextIndex[serverId]-- 
+                            }
                             rf.mu.Unlock()
-                        }
+                        } 
                     } (id)
                 }
             }
             
-            fmt.Printf("\nsleeping before counting success replies\n")
+            fmt.Printf("\nSTART %d: sleeping before counting success replies\n", command)
             time.Sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
-
-            if !committed  && isLeader {
-                fmt.Printf("Counting votes...")
+            
+            rf.mu.Lock()
+            if rf.state != Leader {
+                rf.mu.Unlock()
+                return 
+            }
+            rf.mu.Unlock()
+            
+            if !committed {
+                fmt.Printf("START %d: Counting votes...\n", command)
                 votesForIndex := 0
                 N :=  math.MaxInt32
                 rf.mu.Lock()
                 for i := 0; i < numPeers; i++ {
-                    fmt.Printf("DBG::votecount id:%d matchIndex %d\n", i, rf.matchIndex[i])
+                    //fmt.Printf("DBG::votecount id:%d matchIndex %d\n", i, rf.matchIndex[i])
                     if rf.matchIndex[i] > rf.commitIndex {
                         if rf.matchIndex[i] < N {
                             N = rf.matchIndex[i]
@@ -613,32 +634,34 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                         //       To recievedResponse[]? 
                     }
                 }
-                fmt.Printf("Votes counted %d min commit index %d\n", votesForIndex, N)
+                fmt.Printf("START %d: Votes counted %d min commit index %d\n", command, votesForIndex, N)
                 rf.mu.Unlock()
 
 
                 if (votesForIndex > (numPeers/2)){ 
-                    fmt.Printf("Commiting entry as there is enough votes.\n")
+                    fmt.Printf("START %d: Commiting entry as there is enough votes.\n", command)
                     go func(){
                         committed = true
                         rf.mu.Lock()
+                        prevCommitIndex := rf.commitIndex
                         rf.commitIndex = N     // Discuss: 3. should we use lock?
                         rf.log[N].Term = rf.currentTerm
                         if rf.commitIndex >= lastLogIndex {
-                            rf.ApplyChannel(lastLogIndex, command)
+                            rf.ApplyChannel(N, prevCommitIndex)
                         }
                         rf.mu.Unlock()
                     }()
                 }
             } else if successReplyCount == numPeers-1 {
-                fmt.Printf("Got confirmation from all peers that we are good. Killing this start.\n")
+                fmt.Printf("START %d:Got confirmation from all peers that we are good. Killing this start.\n", command)
                 return
-            }  
+            }
+
         }
     } ()
     
     // Your code here (2B code).
-    return lastLogIndex+1, term, isLeader
+    return lastLogIndex+1, term, true
 }
 
 //
@@ -713,7 +736,6 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 return 
             }
             
-            
             fmt.Printf("-- Peer %d term %d, waiting to aquire lock on state.\n",rf.me, rf.currentTerm)
             rf.mu.Lock()
             state := rf.state
@@ -765,7 +787,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
                     if voteCount > numPeers/2 {
                         // Initialize leader nextIndex and match index
-                        for id:=0; id< (len(rf.peers)-1); id++{
+                        for id:=0; id < numPeers; id++{
                             rf.nextIndex[id] = len(rf.log)
                             rf.matchIndex[id] = 0
                         }
@@ -796,6 +818,12 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond)
                 
                 rf.mu.Lock()
+                
+                for id:=0; id< (len(rf.peers)); id++{
+                    fmt.Printf("   Leader %d term %d:  rf.nextIndex[%d] is %d\n", rf.me, rf.currentTerm, id, rf.nextIndex[id])
+                }
+
+
                 if rf.state != Follower {
 
                     if rf.gotHeartbeat  {
