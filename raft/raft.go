@@ -142,7 +142,7 @@ func (rf *Raft) GetState() (int, bool) {
 func (rf *Raft) persist() {
 
     // Your code here (2C).
-    byte_array := new(bytes.Buffer)
+    /*byte_array := new(bytes.Buffer)
     encoder := labgob.NewEncoder(byte_array)
 
     encoder.Encode(rf.currentTerm)
@@ -171,6 +171,7 @@ func (rf *Raft) persist() {
     // e.Encode(rf.yyy)
     // data := w.Bytes()
     // rf.persister.SaveRaftState(data)
+    */
 }
 
 
@@ -178,6 +179,7 @@ func (rf *Raft) persist() {
 // restore previously persisted state.
 //
 func (rf *Raft) readPersist(data []byte) {
+    /*
     if data == nil || len(data) < 1 { // bootstrap without any state?
         return
     }
@@ -186,8 +188,8 @@ func (rf *Raft) readPersist(data []byte) {
     encoded_array := bytes.NewBuffer(data)
     decoder := labgob.NewDecoder(encoded_array)
 
-    var currentTerm         //Do we need to provide type?
-    var votedFor
+    var currentTerm int         //Do we need to provide type? - YES!
+    var votedFor int
 
     if (decoder.Decode(&currentTerm) != nil || decoder.Decode(&votedFor) != nil ){
 
@@ -198,7 +200,7 @@ func (rf *Raft) readPersist(data []byte) {
     }
 
     for {
-        var logEntry                // Do we need to store decoded data as command and Term?
+        var logEntry LogEntry          // Do we need to store decoded data as command and Term?
 
         if (decoder.Decode(&logEntry) != nil ){
 
@@ -226,6 +228,7 @@ func (rf *Raft) readPersist(data []byte) {
     //   rf.xxx = xxx
     //   rf.yyy = yyy
     // }
+    */
 }
 
 
@@ -276,7 +279,7 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
     if rf.currentTerm < peerTerm {
         rf.currentTerm = peerTerm
 
-        persist() // Saving state
+        rf.persist() // Saving state
         rf.state = Follower
         rf.votedFor = -1
         rf.gotHeartbeat = false
@@ -302,12 +305,16 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
     // TODO: Ask professor/TA if we need a lock here, as all the appendEntries set the heartbeat to 'true'
     //       so maybe technically we don't need it?
-    fmt.Printf("Peer %d term %d: Got heartbeat from leader %d\n",rf.me, rf.currentTerm, args.LeaderId)
+    if len(args.LogEntries) == 0 { 
+        fmt.Printf("Peer %d term %d: Got heartbeat from leader %d\n",rf.me, rf.currentTerm, args.LeaderId)
+    }
+    
     rf.CheckTerm(args.LeaderTerm)
     rf.mu.Lock()
     defer rf.mu.Unlock()
     
     reply.CurrentTerm = rf.currentTerm
+    reply.Success=true
     if rf.currentTerm == args.LeaderTerm {
         rf.gotHeartbeat = true
     }
@@ -321,7 +328,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
     rf.gotHeartbeat = true
         
-    fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d\n",args.PrevLogIndex,((len(rf.log))))
+    //fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d\n",args.PrevLogIndex,((len(rf.log))))
     if args.PrevLogIndex >= len(rf.log) {
         reply.Success = false
         return
@@ -331,33 +338,34 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         fmt.Printf("\nsuccess set to false\n")
         reply.Success = false
         return
-    
     }
-    
-    joinIndex := len(args.LogEntries)
 
-    var logIndex int
-    for index := 0; index < len(args.LogEntries); index++ {
-        logIndex = index + args.PrevLogIndex + 1
-        if  logIndex >= len(rf.log) {
-            joinIndex = index
-            break
-        } else if rf.log[logIndex].Term != args.LogEntries[index].Term {
-            joinIndex = index
-            rf.log = rf.log[0:logIndex]
-            break
+    if len(args.LogEntries) > 0 { 
+        
+        joinIndex := len(args.LogEntries)
+ 
+        var logIndex int
+        for index := 0; index < len(args.LogEntries); index++ {
+            logIndex = index + args.PrevLogIndex + 1
+            if  logIndex >= len(rf.log) {
+                joinIndex = index
+                break
+            } else if rf.log[logIndex].Term != args.LogEntries[index].Term {
+                joinIndex = index
+                rf.log = rf.log[0:logIndex]
+                break
+            }
         }
+
+        rf.log = append(rf.log, args.LogEntries[joinIndex:]...)
+
+        rf.persist() // Saving state
+
+        // Discuss: What would happen if the packets get lost. would RPC return false. clues.
+
+        // Discuss: 4. Handle success case
+        fmt.Printf("Entry Appended succesfull to peer %d\n",rf.me)
     }
-
-    rf.log = append(rf.log, args.LogEntries[joinIndex:]...)
-
-    persist() // Saving state
-
-    // Discuss: What would happen if the packets get lost. would RPC return false. clues.
-
-    // Discuss: 4. Handle success case
-    fmt.Printf("Returning from AppendEntry RPC\n")
-    reply.Success = true
 
     prevCommitIndex := rf.commitIndex
     if (args.LeaderCommitIndex > rf.commitIndex){
@@ -402,7 +410,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 
     if reply.VoteGranted {
         rf.votedFor = args.CandidateId
-        persist() // Saving state
+        rf.persist() // Saving state
         fmt.Printf("-> I the Peer %d say: Vote for cadidate %d Granted!\n",rf.me, args.CandidateId)
     } else {
         fmt.Printf("-> I the Peer %d say: Vote for cadidate %d Denied :/\n",rf.me, args.CandidateId)
@@ -439,7 +447,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 // the struct itself.
 //
 func (rf *Raft) sendRequestVote(server int, args *RequestVoteArgs, reply *RequestVoteReply) bool {
-    fmt.Printf("----> sendRequestProc: sendRequest to %d from %d\n", server, args.CandidateId)
+    fmt.Printf("   sendRequestProc: sendRequest to %d from %d\n", server, args.CandidateId)
     // Why is there no lock here? We are accessing a common variable.
     ok := rf.peers[server].Call("Raft.RequestVote", args, reply)
     return ok
@@ -447,7 +455,7 @@ func (rf *Raft) sendRequestVote(server int, args *RequestVoteArgs, reply *Reques
 
 
 func (rf *Raft) sendAppendEntries(server int, args *AppendEntriesArgs, reply *AppendEntriesReply) bool {
-    fmt.Printf("----> sendAppendEntriesProc: append entries RPC to %d from %d\n", server, args.LeaderId)
+    fmt.Printf("   sendAppendEntriesProc: append entries RPC to %d from %d\n", server, args.LeaderId)
     ok := rf.peers[server].Call("Raft.AppendEntries", args, reply)
     return ok
 }
@@ -529,9 +537,11 @@ func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
                rf.CheckTerm(reply.FollowerTerm)
                // TODO: Do I need the lock for reading onle?
                rf.mu.Lock()
-               fmt.Printf("Peer %d candidate: Send request to peer %d worked.\n", rf.me, server)
                if !ok {
                  reply.VoteGranted = false  
+                 fmt.Printf("Peer %d candidate: Send request to peer %d failed, no connection.\n", rf.me, server)
+               } else {
+                  fmt.Printf("Peer %d candidate: Send request to peer %d worked\n", rf.me, server)
                }
                rf.mu.Unlock()
     
@@ -577,12 +587,14 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     oneEntry.Term = term
     
     rf.log = append(rf.log, oneEntry)
-    persist() // Saving state
+    fmt.Printf("START %d: Adding command %d. Leader new log size: %d\n", command, command , len(rf.log))
+    rf.persist() // Saving state
     rf.mu.Unlock()
 
     
     go func() {
     
+        
         // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
         // the for loop inside only iterates over the left peers.
         
@@ -591,8 +603,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
         var receivedResponse []int
         receivedResponse = append(receivedResponse, myId)
 
-        fmt.Printf("START %d: Adding command %d. Leader new log size: %d\n", command, command , len(rf.log))
-                    
+        
         for true {
             if rf.killed() {
                     fmt.Printf("*** Peer %d term %d: Terminated. Closing all outstanding Append Entries calls to followers.\n", myId, term)
@@ -640,7 +651,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                         ok:=rf.sendAppendEntries(serverId, &args, &reply)
                         
                         if !ok {
-                           fmt.Printf("START %d: Append entries to peer %d wasn't delivered. Will retry.", command, serverId)
+                           fmt.Printf("START %d: Append entries to peer %d wasn't delivered. Will retry.\n", command, serverId)
                         } else if !rf.CheckTerm(reply.CurrentTerm) || term < reply.CurrentTerm {
                             fmt.Printf("START %d: Oooh. I am not the current Leader any more peer %d. I got a reply from someone with a higher term!!\n", command, rf.me)
                             return 
@@ -658,7 +669,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             rf.mu.Unlock()
                         // TODO: That was a cool bug here, with nextIndex being decremented when the message is not delivered
                         } else  {
-                            fmt.Printf("START %d: Append entries to peer %d failed. Decrease nextIndex.", command, serverId)
+                            fmt.Printf("START %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, serverId)
                             rf.mu.Lock()
                             if rf.nextIndex[serverId] != 0 {
                                 rf.nextIndex[serverId]-- 
@@ -685,7 +696,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                 N :=  math.MaxInt32
                 rf.mu.Lock()
                 for i := 0; i < numPeers; i++ {
-                    //fmt.Printf("DBG::votecount id:%d matchIndex %d\n", i, rf.matchIndex[i])
+                    fmt.Printf("DBG::votecount id:%d matchIndex %d\n", i, rf.matchIndex[i])
                     if rf.matchIndex[i] > rf.commitIndex {
                         if rf.matchIndex[i] < N {
                             N = rf.matchIndex[i]
@@ -713,7 +724,9 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                         rf.mu.Unlock()
                     }()
                 }
-            } else if successReplyCount == numPeers-1 {
+            }
+
+            if successReplyCount == numPeers-1 {
                 fmt.Printf("START %d:Got confirmation from all peers that we are good. Killing this start.\n", command)
                 return
             }
@@ -770,7 +783,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
     rf.currentTerm = 0
 
-    persist() // Saving state
+    rf.persist() // Saving state
     rf.votedFor = -1
     rf.commitIndex = -1
     rf.lastApplied = -1
@@ -824,16 +837,19 @@ func Make(peers []*labrpc.ClientEnd, me int,
             case Candidate:
                 rf.mu.Lock()
                 rf.currentTerm++
-                persist() // Saving state
+                rf.persist() // Saving state
                 fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
 
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 rf.votedFor = rf.me
-                persist() // Saving state
+                oldTerm := rf.currentTerm // cache Old term before sleep for logging purposes  
+                rf.persist() // Saving state
                 rf.mu.Unlock()
                 
                 voteCount := 1
                 var replies = make([]RequestVoteReply, numPeers)
+                
+                
                 rf.sendVoteRequests(replies, numPeers)
 
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
@@ -841,7 +857,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
                 
                 rf.mu.Lock()
-                fmt.Printf("   peer %d term %d -- candidate -- :Waking up from snooze to count votes. %f\n", rf.me, rf.currentTerm, snoozeTime)
+                fmt.Printf("   peer %d term %d -- candidate -- :Waking up from snooze to count votes. %f\n", rf.me, oldTerm, snoozeTime)
                 if (rf.state != Follower) {
                     fmt.Printf("-> Peer %d term %d -- candidate --: Start Counting votes...\n\n",rf.me, rf.currentTerm)
                     
@@ -872,7 +888,10 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     } else {
                         fmt.Printf("   peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
                     }  
-                } 
+                } else {
+                   fmt.Printf("   peer %d term %d -- candidate -- :I woke up, butsomeone with higher term answered. Reverting to follower :/ %f\n", rf.me, oldTerm, snoozeTime)
+                 
+                }
                 rf.mu.Unlock()
                 
 
