@@ -20,13 +20,13 @@ package raft
 import "sync"
 import "sync/atomic"
 import "github.com/zilmano/raftproj/labrpc"
-import "github.com/zilmano/raftproj/labgob"
+//import "github.com/zilmano/raftproj/labgob"
 import "math/rand"
 import "fmt"
 import "time"
 import "log"
 import "math"
-import "bytes"
+//import "bytes"
 // import "../labgob"
 
 
@@ -359,6 +359,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
         // Discuss: 4. Handle success case
         fmt.Printf("Entry Appended succesfull to peer %d\n",rf.me)
+        fmt.Printf("Peer %d Update log %v\n",rf.me,rf.log)
+           
     }
 
     prevCommitIndex := rf.commitIndex
@@ -592,7 +594,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
         // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
         // the for loop inside only iterates over the left peers.
         
-        committed := false
+        //committed := false
         successReplyCount := 0
         var receivedResponse []int
         receivedResponse = append(receivedResponse, myId)
@@ -653,12 +655,11 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             successReplyCount++
                             receivedResponse = append(receivedResponse,serverId)
                             rf.mu.Lock()
-                            if lastLogIndex >= rf.nextIndex[serverId] {
-                                rf.matchIndex[serverId]= lastLogIndex
-                                rf.matchIndex[rf.me] = lastLogIndex
-                                // TODO: Ask the Prof about the correctness of this.
-                                rf.nextIndex[serverId] = lastLogIndex + 1 // len(rf.log())
-                            }
+                            rf.matchIndex[serverId] = len(rf.log)-1
+                            rf.matchIndex[rf.me] = len(rf.log)-1
+                            // TODO: Ask the Prof about the correctness of this.
+                            rf.nextIndex[serverId] = len(rf.log) // len(rf.log())
+                        
                             fmt.Printf("START %d: Recieve successReply AppendEntry for peer %d \n", command, serverId)
                             rf.mu.Unlock()
                         // TODO: That was a cool bug here, with nextIndex being decremented when the message is not delivered
@@ -684,42 +685,39 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
             }
             rf.mu.Unlock()
             
-            if !committed {
-                fmt.Printf("START %d: Counting votes...\n", command)
-                votesForIndex := 0
-                N :=  math.MaxInt32
-                rf.mu.Lock()
-                for i := 0; i < numPeers; i++ {
-                    fmt.Printf("DBG::votecount id:%d matchIndex %d\n", i, rf.matchIndex[i])
-                    if rf.matchIndex[i] > rf.commitIndex {
-                        if rf.matchIndex[i] < N {
-                            N = rf.matchIndex[i]
-                        }
-                        votesForIndex++
-                        // TODO: Add the id of peers with match indexes bigger then lastLogIndex
-                        //       To recievedResponse[]? 
+            fmt.Printf("START %d: Counting votes...\n", command)
+            votesForIndex := 0
+            N :=  math.MaxInt32
+            rf.mu.Lock()
+            for i := 0; i < numPeers; i++ {
+                fmt.Printf("DBG::votecount id:%d matchIndex %d\n", i, rf.matchIndex[i])
+                if rf.matchIndex[i] > rf.commitIndex {
+                    if rf.matchIndex[i] < N {
+                        N = rf.matchIndex[i]
                     }
-                }
-                fmt.Printf("START %d: Votes counted %d min commit index %d\n", command, votesForIndex, N)
-                rf.mu.Unlock()
-
-
-                if (votesForIndex > (numPeers/2)){ 
-                    fmt.Printf("START %d: Commiting entry as there is enough votes.\n", command)
-                    go func(){
-                        committed = true
-                        rf.mu.Lock()
-                        prevCommitIndex := rf.commitIndex
-                        rf.commitIndex = N     // Discuss: 3. should we use lock?
-                        rf.log[N].Term = rf.currentTerm
-                        if rf.commitIndex >= lastLogIndex {
-                            rf.ApplyChannel(N, prevCommitIndex)
-                        }
-                        rf.mu.Unlock()
-                    }()
+                    votesForIndex++
+                    // TODO: Add the id of peers with match indexes bigger then lastLogIndex
+                    //       To recievedResponse[]? 
                 }
             }
+            fmt.Printf("START %d: Votes counted %d min commit index %d\n", command, votesForIndex, N)
+            rf.mu.Unlock()
 
+            if (votesForIndex > (numPeers/2)){ 
+                fmt.Printf("START %d: Commiting entry as there is enough votes.\n", command)
+                go func(){
+                    //committed = true
+                    rf.mu.Lock()
+                    prevCommitIndex := rf.commitIndex
+                    rf.commitIndex = N     // Discuss: 3. should we use lock?
+                    //rf.log[N].Term = rf.currentTerm
+                    if rf.commitIndex > prevCommitIndex {
+                        rf.ApplyChannel(N, prevCommitIndex)
+                    }
+                    rf.mu.Unlock()
+                }()
+            }
+        
             if successReplyCount == numPeers-1 {
                 fmt.Printf("START %d:Got confirmation from all peers that we are good. Killing this start.\n", command)
                 return
