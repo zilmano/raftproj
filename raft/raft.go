@@ -329,7 +329,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
     rf.gotHeartbeat = true
         
-    //fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d\n",args.PrevLogIndex,((len(rf.log))))
+    fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d. logEntries is %v\n",args.PrevLogIndex,((len(rf.log))), args.LogEntries)
     if args.PrevLogIndex >= len(rf.log) {
         reply.Success = false
         return
@@ -358,6 +358,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
             }
         }
 
+        fmt.Printf("Join Index %d\n", joinIndex)
         rf.log = append(rf.log, args.LogEntries[joinIndex:]...)
 
         go rf.persist() // Saving state
@@ -371,9 +372,10 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     }
 
     prevCommitIndex := rf.commitIndex
+    fmt.Printf("PrevCommitIndex: %d\n", rf.commitIndex)
     if (args.LeaderCommitIndex > rf.commitIndex){
         if(args.LeaderCommitIndex<len(rf.log)){
-            rf.commitIndex = (args.LeaderCommitIndex)
+            rf.commitIndex = args.LeaderCommitIndex
         } else {
             rf.commitIndex = len(rf.log)-1
         }
@@ -472,7 +474,7 @@ func (rf *Raft) sendHeartbeats() {
     lastLogIndex := -1
     lastLogTerm := -1
     myId := rf.me
-    if len(rf.log) > 0{
+    if len(rf.log) > 0 {
         /*
         lastLogIndex = numPeers-1
         fmt.Printf("\nNumber of peers is %d within sendHeartbeats\n",numPeers)  // Discuss 1
@@ -596,8 +598,6 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
     
     go func() {
-    
-        
         // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
         // the for loop inside only iterates over the left peers.
         
@@ -613,43 +613,50 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                     return 
             }
 
-            var args = AppendEntriesArgs {
-                LeaderId: myId,
-            }
             rf.mu.Lock()
             numPeers := len(rf.peers)
             rf.mu.Unlock()
-
             for id := 0; id < numPeers; id++ {
                 //fmt.Printf("DBG::id %d recievedResponse %v",id , receivedResponse)
                 if (!find(receivedResponse, id))  {
                     fmt.Printf("START %d: Sending AppendEntries to peer %d\n", command, id) 
-                    fmt.Printf("DBG::lastLogIndex %d rf.nextIndex[%d] %d\n",lastLogIndex ,id, rf.nextIndex[id])
+                    //fmt.Printf("DBG::lastLogIndex %d rf.nextIndex[%d] %d\n",lastLogIndex ,id, rf.nextIndex[id])
                     if lastLogIndex < rf.nextIndex[id] {
                         successReplyCount++
                         receivedResponse = append(receivedResponse,id)
                         continue
                     }
-                    var logEntries []LogEntry
-                    // TODO: you can prob remove the append to logEntries and assign directly, is logEntries is empty
-                    if (rf.nextIndex[id] == -1) {
-                        logEntries = append(logEntries, rf.log...)
-                    } else {
-                        logEntries = append(logEntries,rf.log[(rf.nextIndex[id]):]...)
-                    }
-                    args.LogEntries = logEntries
-                    fmt.Printf("START %d: Log entries to send to peer %d: %v\n", command, id, logEntries)
-                    if rf.nextIndex[id] == 0 {
-                        args.PrevLogTerm = 0
-                    }else {
-                        args.PrevLogTerm = rf.log[rf.nextIndex[id]-1].Term
-                    }
-                    args.PrevLogIndex = rf.nextIndex[id]-1
-                    args.LeaderTerm = term
-                    args.LeaderCommitIndex = rf.commitIndex
-                
+
                     go func(serverId int) {
+                        // TODO: you can prob remove the append to logEntries and assign directly, is logEntries is empty
                         
+                        var logEntries []LogEntry
+                        var args = AppendEntriesArgs {
+                               LeaderId: myId,
+                        }
+                        
+                        rf.mu.Lock()
+                        if (rf.nextIndex[serverId] == -1) {
+                            logEntries = append(logEntries, rf.log...)
+                        } else {
+                            logEntries = append(logEntries,rf.log[(rf.nextIndex[serverId]):]...)
+                        }
+
+                        if rf.nextIndex[serverId] == 0 {
+                            args.PrevLogTerm = 0
+                        } else {
+                            args.PrevLogTerm = rf.log[rf.nextIndex[serverId]-1].Term
+                        }
+                        
+                        latchLogLength := len(rf.log)
+                    
+                        args.LogEntries = logEntries
+                        fmt.Printf("START %d: Log entries to send to peer %d: %v\n", command, serverId, logEntries)
+                        args.PrevLogIndex = rf.nextIndex[serverId]-1
+                        args.LeaderTerm = term
+                        args.LeaderCommitIndex = rf.commitIndex
+                        rf.mu.Unlock()
+
                         var reply AppendEntriesReply
                         ok:=rf.sendAppendEntries(serverId, &args, &reply)
                         
@@ -662,12 +669,14 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             successReplyCount++
                             receivedResponse = append(receivedResponse,serverId)
                             rf.mu.Lock()
-                            rf.matchIndex[serverId] = len(rf.log)-1
-                            rf.matchIndex[rf.me] = len(rf.log)-1
+                            rf.matchIndex[serverId] = latchLogLength-1
+                            rf.matchIndex[rf.me] = latchLogLength-1
                             // TODO: Ask the Prof about the correctness of this.
-                            rf.nextIndex[serverId] = len(rf.log) // len(rf.log())
+                            rf.nextIndex[serverId] = latchLogLength // len(rf.log())
                         
-                            fmt.Printf("START %d: Recieve successReply AppendEntry for peer %d \n", command, serverId)
+                            fmt.Printf("START %d: Recieve successReply AppendEntry for peer %d latchLogLength %d \n", command, serverId, latchLogLength)
+                            fmt.Printf("START %d: DBG:: rf.matchIndex  %v \n", command, rf.matchIndex)
+                            
                             rf.mu.Unlock()
                         // TODO: That was a cool bug here, with nextIndex being decremented when the message is not delivered
                         } else  {
