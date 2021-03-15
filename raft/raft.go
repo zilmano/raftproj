@@ -46,6 +46,7 @@ import "math"
 
 const RANDOM_TIMER_MAX = 600 // max value in ms
 const RANDOM_TIMER_MIN = 200 // max value in ms
+const NETWORK_DELAY_BOUND = 10 // max value in ms
 const HEARTBEAT_RATE = 5.0 // in hz, n beats a second
 
 type ApplyMsg struct {
@@ -662,8 +663,10 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             successReplyCount++
                             receivedResponse = append(receivedResponse,serverId)
                             rf.mu.Lock()
-                            rf.matchIndex[serverId] = latchLogLength-1
-                            rf.matchIndex[rf.me] = latchLogLength-1
+                            if (latchLogLength-1 > rf.matchIndex[serverId]) {
+                                rf.matchIndex[serverId] = latchLogLength-1
+                                rf.matchIndex[rf.me] = latchLogLength-1
+                            }
                             // TODO: Ask the Prof about the correctness of this.
                             rf.nextIndex[serverId] = latchLogLength // len(rf.log())
                         
@@ -685,7 +688,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
             }
             
             fmt.Printf("\nSTART %d: sleeping before counting success replies\n", command)
-            time.Sleep(time.Duration(RANDOM_TIMER_MIN*time.Millisecond))
+            time.Sleep(time.Duration(NETWORK_DELAY_BOUND*time.Millisecond))
             
             rf.mu.Lock()
             if rf.state != Leader {
