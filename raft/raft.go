@@ -143,6 +143,8 @@ func (rf *Raft) GetState() (int, bool) {
 func (rf *Raft) persist() {
 
     // Your code here (2C).
+
+    fmt.Printf("\n\nPersist test: currentTerm is %d and peer %d voted for %d\nLog state is %v\n",rf.currentTerm,rf.me,rf.votedFor,rf.log)
     byte_array := new(bytes.Buffer)
     encoder := labgob.NewEncoder(byte_array)
 
@@ -165,6 +167,9 @@ func (rf *Raft) persist() {
     
     encoded_array := byte_array.Bytes()
     rf.persister.SaveRaftState(encoded_array)
+
+
+
 
 
     // Your code here (2C).
@@ -205,9 +210,10 @@ func (rf *Raft) readPersist(data []byte) {
     }
 
     for {
+        var logEntry_2 = LogEntry {}
         var logEntry = LogEntry {}                // Do we need to store decoded data as command and Term?
 
-        if (decoder.Decode(&logEntry) != nil ){
+        if (decoder.Decode(&logEntry) != nil || decoder.Decode(&logEntry_2) != nil ){
 
             break // is it correct to break after first nil?
 
@@ -217,6 +223,8 @@ func (rf *Raft) readPersist(data []byte) {
             
         }
     }
+
+
 
     // Example:
     // r := bytes.NewBuffer(data)
