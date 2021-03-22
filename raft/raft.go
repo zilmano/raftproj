@@ -289,6 +289,9 @@ type AppendEntriesReply struct {
     // Your data here (2A).
     CurrentTerm int
     Success bool
+    ConflictTerm int
+    ConflictIndex int
+    LogLength int
 }
 
 func (rf *Raft) CheckTerm(peerTerm int) bool {
@@ -349,12 +352,33 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 //    fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d. logEntries is %v\n",args.PrevLogIndex,((len(rf.log))), args.LogEntries)
     if args.PrevLogIndex >= len(rf.log) {
         reply.Success = false
+        reply.LogLength = len(rf.log)
+        reply.ConflictTerm = -1
+        reply.ConflictIndex = -1
         return
     }
 
     if((args.PrevLogIndex > -1) && (rf.log[args.PrevLogIndex].Term != args.PrevLogTerm )){
  //       fmt.Printf("\nsuccess set to false\n")
         reply.Success = false
+        conflictTerm := rf.log[args.PrevLogIndex].Term
+        conflictIndex := -1
+
+        for index := (args.PrevLogIndex); index > -1; index-- {
+
+            if(rf.log[index].Term!=conflictTerm){
+                break
+            }
+
+            conflictIndex = index
+
+
+        }
+
+        reply.ConflictTerm = conflictTerm
+        reply.ConflictIndex = conflictIndex
+        reply.LogLength = -1
+
         return
     }
 
@@ -702,7 +726,41 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                       //      fmt.Printf("START %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, serverId)
                             rf.mu.Lock()
                             if rf.nextIndex[serverId] != 0 {
-                                rf.nextIndex[serverId]-- 
+
+                                if(reply.ConflictTerm == -1){
+
+                                    rf.nextIndex[serverId] = reply.LogLength
+
+                                }else{
+
+                                   // rf.nextIndex[serverId] = reply.ConflictIndex
+
+                                    
+
+                                    conflictTermFound := false
+                                    new_index := -1
+
+                                    for index := (len(rf.log) - 1); index > -1; index-- {
+                                        if(rf.log[index].Term==reply.ConflictTerm){
+                                            conflictTermFound = true
+                                            new_index = index + 1
+
+                                            break
+                                        }
+                                    }
+
+                                    if conflictTermFound{
+                                        rf.nextIndex[serverId] = new_index
+                                    }else{
+                                        rf.nextIndex[serverId] = reply.ConflictIndex
+                                    }
+
+                                    
+
+
+                                 //   rf.nextIndex[serverId]--
+                                }
+                     //           rf.nextIndex[serverId]-- 
                             }
                             rf.mu.Unlock()
                         } 
