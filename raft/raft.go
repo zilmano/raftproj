@@ -148,20 +148,23 @@ func (rf *Raft) persist() {
     byte_array := new(bytes.Buffer)
     encoder := labgob.NewEncoder(byte_array)
 
+    rf.mu.Lock()
+//    defer rf.mu.Unlock()
+
     encoder.Encode(rf.currentTerm)
     encoder.Encode(rf.votedFor)
 
-    rf.mu.Lock()            //Should we use lock over entire function?
+//    rf.mu.Lock()            //Should we use lock over entire function?
   //  defer rf.mu.Unlock()
     
-    log := append([]LogEntry(nil), rf.log...)
+    log := append([]LogEntry(nil), rf.log...) // making a copy of log before releasing log
+
+    rf.mu.Unlock()
+
     log_length := len(log)
     
-    rf.mu.Unlock()
-    //tmp := append([]int(nil), arr...)
     for index := 0; index < log_length; index++ {
         encoder.Encode(log[index])
-//        encoder.Encode(log[index])
 
     }
     
@@ -210,11 +213,7 @@ func (rf *Raft) readPersist(data []byte) {
     }
 
     for {
-     //   var logEntry_2 = LogEntry {}
         var logEntry = LogEntry {}                // Do we need to store decoded data as command and Term?
-
-//        if (decoder.Decode(&logEntry) != nil || decoder.Decode(&logEntry_2) != nil ){
-
         
         if (decoder.Decode(&logEntry) != nil){
             break // is it correct to break after first nil?
@@ -228,10 +227,10 @@ func (rf *Raft) readPersist(data []byte) {
 
     // is this necessary?
 
-    for id := 0; id < len(rf.peers); id++ {
+//    for id := 0; id < len(rf.peers); id++ {
     //    rf.nextIndex[id] = len(rf.log)
                                
-    }
+  //  }
 
 
 
@@ -301,10 +300,9 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
     defer rf.mu.Unlock()
     if rf.currentTerm < peerTerm {
         rf.currentTerm = peerTerm
-
-        go rf.persist() // Saving state
         rf.state = Follower
         rf.votedFor = -1
+        go rf.persist() // Saving state. we modify term and votedFor but only one call needed
         rf.gotHeartbeat = false
         return false
     } 
@@ -731,18 +729,19 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
                                 if(reply.ConflictTerm == -1){
 
+                                    // if prev log index was greater than the length of follower's log
+                                    // we set next index to length of follower's log
+
                                     rf.nextIndex[serverId] = reply.LogLength
 
                                 }else{
-
-                                   // rf.nextIndex[serverId] = reply.ConflictIndex
 
                                     
 
                                     conflictTermFound := false
                                     new_index := -1
 
-                                    for index := (args.PrevLogIndex); index > -1; index-- {
+                                    for index := (len(rf.log) -1 ); index > -1; index-- {
                                         if(rf.log[index].Term==reply.ConflictTerm){
                                             conflictTermFound = true
                                             new_index = index + 1
@@ -752,8 +751,14 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                                     }
 
                                     if conflictTermFound{
+
+                                        // We managed to find conflicting term in our log. So, we set next index to 
+                                        // the index that is 1 beyond the index of conflicting term idex
                                         rf.nextIndex[serverId] = new_index
                                     }else{
+                                        // we didn't find conflicting term in our log. So, we set next index to be
+                                        // index of conflicting term from the follower's log
+
                                         rf.nextIndex[serverId] = reply.ConflictIndex
                                     }
 
@@ -876,9 +881,9 @@ func Make(peers []*labrpc.ClientEnd, me int,
     rf.dead = 0
 
     rf.currentTerm = 0
-
-    go rf.persist() // Saving state
     rf.votedFor = -1
+    // Do we need to call persist here given the fact that this is just the initilaized data?
+   //i go rf.persist() // Saving state. only one call needed for both term and votedFor
     rf.commitIndex = -1
     rf.lastApplied = -1
     rf.state = Follower
@@ -934,13 +939,13 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Lock()
                 rf.currentTerm++
 
-                go rf.persist() // Saving state
+            //    go rf.persist() // Saving state
              //   fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
 
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 rf.votedFor = rf.me
             //    oldTerm := rf.currentTerm // cache Old term before sleep for logging purposes  
-                go rf.persist() // Saving state
+                go rf.persist() // Saving state. we perhaps only need one call to rf.persist here. first call commented out
                 rf.mu.Unlock()
                 
                 voteCount := 1
