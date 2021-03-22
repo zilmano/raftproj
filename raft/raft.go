@@ -161,7 +161,7 @@ func (rf *Raft) persist() {
     //tmp := append([]int(nil), arr...)
     for index := 0; index < log_length; index++ {
         encoder.Encode(log[index])
-        encoder.Encode(log[index])
+//        encoder.Encode(log[index])
 
     }
     
@@ -210,11 +210,13 @@ func (rf *Raft) readPersist(data []byte) {
     }
 
     for {
-        var logEntry_2 = LogEntry {}
+     //   var logEntry_2 = LogEntry {}
         var logEntry = LogEntry {}                // Do we need to store decoded data as command and Term?
 
-        if (decoder.Decode(&logEntry) != nil || decoder.Decode(&logEntry_2) != nil ){
+//        if (decoder.Decode(&logEntry) != nil || decoder.Decode(&logEntry_2) != nil ){
 
+        
+        if (decoder.Decode(&logEntry) != nil){
             break // is it correct to break after first nil?
 
         }else{
@@ -740,7 +742,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                                     conflictTermFound := false
                                     new_index := -1
 
-                                    for index := (len(rf.log) - 1); index > -1; index-- {
+                                    for index := (args.PrevLogIndex); index > -1; index-- {
                                         if(rf.log[index].Term==reply.ConflictTerm){
                                             conflictTermFound = true
                                             new_index = index + 1
