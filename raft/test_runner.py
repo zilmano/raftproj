@@ -12,7 +12,7 @@ if __name__ == "__main__":
     for i in range(args.N):
         print(f"Running test {i} out of {args.N}...", end="")
 
-        log = subp.run(['go','test','-run','2A'], stdout=subp.PIPE)
+        log = subp.run(['go','test','-run','2B'], stdout=subp.PIPE)
         log_lines = str(log.stdout).split("\\n")
 
         if log_lines[-3] == "PASS":

@@ -44,10 +44,10 @@ import "math"
 //
 
 
-const RANDOM_TIMER_MAX = 600 // max value in ms
-const RANDOM_TIMER_MIN = 200 // max value in ms
+const RANDOM_TIMER_MAX = 390 // max value in ms
+const RANDOM_TIMER_MIN = 130 // max value in ms
 const NETWORK_DELAY_BOUND = 10 // max value in ms
-const HEARTBEAT_RATE = 5.0 // in hz, n beats a second
+const HEARTBEAT_RATE = 9.0 // in hz, n beats a second
 
 type ApplyMsg struct {
     CommandValid bool
@@ -100,6 +100,8 @@ type Raft struct {
 
     state PeerState
     gotHeartbeat bool
+
+    addExtraTime bool
     
 }
 
@@ -275,6 +277,9 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
         rf.currentTerm = peerTerm
 
         rf.persist() // Saving state
+        if rf.state == Follower {
+            rf.addExtraTime = true
+        }
         rf.state = Follower
         rf.votedFor = -1
         rf.gotHeartbeat = false
@@ -800,6 +805,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
     rf.lastApplied = -1
     rf.state = Follower
     rf.gotHeartbeat = false
+    rf.addExtraTime = false
 
     rf.nextIndex = make([]int, len(rf.peers))
     rf.matchIndex = make([]int, len(rf.peers))
@@ -823,7 +829,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 return 
             }
             
-            fmt.Printf("-- Peer %d term %d, waiting to aquire lock on state.\n",rf.me, rf.currentTerm)
+            //fmt.Printf("-- Peer %d term %d, waiting to aquire lock on state.\n",rf.me, rf.currentTerm)
             rf.mu.Lock()
             state := rf.state
             rf.mu.Unlock()
@@ -835,6 +841,16 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 fmt.Printf("   peer %d  term %d -- follower -- : Set election timer to time %f\n", rf.me, rf.currentTerm, snoozeTime)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
                 
+                rf.mu.Lock()
+                addExtraTime := rf.addExtraTime
+                rf.mu.Unlock()
+
+                if addExtraTime {
+                    snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
+                    fmt.Printf("   peer %d  term %d -- follower -- : My term jumped, snooze for more %f\n", rf.me, rf.currentTerm, snoozeTime)
+                    time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+                }
+            
                 rf.mu.Lock()  
                 fmt.Printf("   peer %d term %d -- follower -- : my election timer had elapsed.\n",rf.me, rf.currentTerm)
                 if (!rf.gotHeartbeat) {
@@ -842,6 +858,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     rf.state = Candidate
                 }
                 rf.gotHeartbeat = false
+                rf.addExtraTime = false
                 rf.mu.Unlock()
             
 
