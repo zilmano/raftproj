@@ -22,7 +22,7 @@ import "sync/atomic"
 import "github.com/zilmano/raftproj/labrpc"
 import "github.com/zilmano/raftproj/labgob"
 import "math/rand"
-//import "fmt"
+import "fmt"
 import "time"
 import "log"
 import "math"
@@ -142,6 +142,9 @@ func (rf *Raft) GetState() (int, bool) {
 //
 func (rf *Raft) persist() {
 
+    length:=len(rf.log)
+         fmt.Printf("\nWithin Persist, state is %d and term is %d --- \nPeer %d has log of length %d \nFirst half of log is %v\nSecond half of log is %v\n",rf.state,rf.currentTerm,rf.me,length,rf.log[:(length/2)],rf.log[(length/2):])
+
     // Your code here (2C).
 
 //    fmt.Printf("\n\nPersist test: currentTerm is %d and peer %d voted for %d\nLog state is %v\n",rf.currentTerm,rf.me,rf.votedFor,rf.log)
@@ -191,6 +194,10 @@ func (rf *Raft) persist() {
 // restore previously persisted state.
 //
 func (rf *Raft) readPersist(data []byte) {
+
+    length := len(rf.log)
+
+    fmt.Printf("\nWaking up --- \nPeer %d has log of length %d \nFirst half of log is %v\nSecond half of log is %v\n",rf.me,length,rf.    log[:(length/2)],rf.log[(length/2):])
     
     if data == nil || len(data) < 1 { // bootstrap without any state?
         return
@@ -323,6 +330,8 @@ func (rf *Raft) ApplyChannel(commandIndex int, prevCommitIndex int) {
 }
 
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
+
+    fmt.Printf("\nI am peer %d and I received AE request from %d with prefvLogIndex %d\nmy term is %d and Leader term is %d",rf.me,args.LeaderId,args.PrevLogIndex,rf.currentTerm,args.LeaderTerm)
     
     // TODO: Ask professor/TA if we need a lock here, as all the appendEntries set the heartbeat to 'true'
     //       so maybe technically we don't need it?
@@ -344,6 +353,11 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 
     if args.LeaderTerm < rf.currentTerm{
         reply.Success=false
+
+        reply.LogLength = -1
+        reply.ConflictTerm = -1
+        reply.ConflictIndex = -1                   
+        fmt.Printf("\nFailure returned with no backtrack\n")
         return 
     }
     
@@ -355,6 +369,8 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         reply.LogLength = len(rf.log)
         reply.ConflictTerm = -1
         reply.ConflictIndex = -1
+        fmt.Printf("\nFailure returned with log length backtrack, %d\n",reply.LogLength)
+
         return
     }
 
@@ -378,6 +394,9 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         reply.ConflictTerm = conflictTerm
         reply.ConflictIndex = conflictIndex
         reply.LogLength = -1
+
+        fmt.Printf("\nargs.PrevLogIndex is %d and rf.log[args.PrevLogIndex].Term is %d\n and log is %v\n",args.PrevLogIndex,rf.log[args.PrevLogIndex].Term,rf.log)
+        fmt.Printf("\nFailure returned with conflict term %d and first index of that term is %d  \n",reply.ConflictTerm,reply.         ConflictIndex)
 
         return
     }
@@ -697,7 +716,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                         args.LeaderTerm = term
                         args.LeaderCommitIndex = rf.commitIndex
                         rf.mu.Unlock()
-
+                        fmt.Printf("\n Before sending AE Leader %d has next index record of %v\n",rf.me,rf.nextIndex)
+                        fmt.Printf("peer %d (leader) sending AE to peer %d . args.PrevLogIndex is %d and  args.PrevLogTerm  is %d\n", rf.me, serverId, args.PrevLogIndex,args.PrevLogTerm)
                         var reply AppendEntriesReply
                         ok:=rf.sendAppendEntries(serverId, &args, &reply)
                         
@@ -726,13 +746,23 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                       //      fmt.Printf("START %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, serverId)
                             rf.mu.Lock()
                             if rf.nextIndex[serverId] != 0 {
+                            
+                                fmt.Printf("\nAE sent by Leader (peer %d) failed. updating next index at leader for peer %d\n",rf.me,serverId)
 
-                                if(reply.ConflictTerm == -1){
+                                if (reply.LogLength == -1 && reply.ConflictTerm == -1 && reply.ConflictIndex == -1){
+                                rf.nextIndex[serverId] = rf.nextIndex[serverId]
+                                fmt.Printf("\npeer %d has next index %d . No change\n",serverId,rf.nextIndex[serverId])
+                                fmt.Printf("\nfail 1: Leader %d has next index record of %v\n",rf.me,rf.nextIndex)
+                                }
+
+                                if(reply.ConflictTerm == -1 && reply.LogLength != -1){
 
                                     // if prev log index was greater than the length of follower's log
                                     // we set next index to length of follower's log
 
                                     rf.nextIndex[serverId] = reply.LogLength
+                                    fmt.Printf("\npeer %d has next index %d . prev log index was beyond the peer log length\n",serverId,rf.nextIndex[serverId])
+                                    fmt.Printf("\nfail 2: Leader %d has next index record of %v\n",rf.me,rf.nextIndex)
 
                                 }else{
 
@@ -755,11 +785,19 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                                         // We managed to find conflicting term in our log. So, we set next index to 
                                         // the index that is 1 beyond the index of conflicting term idex
                                         rf.nextIndex[serverId] = new_index
+
+                                        fmt.Printf("\npeer %d has next index %d . we found the conflict term in log. so using that index\n",serverId,rf.nextIndex[serverId])
+                                        fmt.Printf("\nfail 3: Leader %d has next index record of %v\n",rf.me,rf.nextIndex)
                                     }else{
                                         // we didn't find conflicting term in our log. So, we set next index to be
                                         // index of conflicting term from the follower's log
 
+
+
                                         rf.nextIndex[serverId] = reply.ConflictIndex
+
+                                        fmt.Printf("\npeer %d has next index %d . conflict term not found. so going only to conflict index\n",serverId,rf.nextIndex[serverId])
+                                        fmt.Printf("\nfail 4: Leader %d has next index record of %v\n",rf.me,rf.nextIndex)
                                     }
 
                                     
@@ -901,7 +939,9 @@ func Make(peers []*labrpc.ClientEnd, me int,
  //   fmt.Printf("Finish 'Making' peer %d...\n", rf.me)
 
     // initialize from state persisted before a crash
+    rf.mu.Lock()
     rf.readPersist(persister.ReadRaftState())
+    rf.mu.Unlock()
 
     // Start Peer State Machine
     go func() {
@@ -940,7 +980,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.currentTerm++
 
             //    go rf.persist() // Saving state
-             //   fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
+                fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
 
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 rf.votedFor = rf.me
@@ -976,7 +1016,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                             rf.matchIndex[id] = 0
                         }
 
-      //                  fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
+                        fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d and details of replies is %v\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2,replies)
                         rf.state = Leader
         //                fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
                         go rf.sendHeartbeats()
