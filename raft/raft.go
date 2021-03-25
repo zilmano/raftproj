@@ -20,13 +20,13 @@ package raft
 import "sync"
 import "sync/atomic"
 import "github.com/zilmano/raftproj/labrpc"
-//import "github.com/zilmano/raftproj/labgob"
+import "github.com/zilmano/raftproj/labgob"
 import "math/rand"
 import "fmt"
 import "time"
 import "log"
 import "math"
-//import "bytes"
+import "bytes"
 // import "../labgob"
 
 
@@ -145,24 +145,34 @@ func (rf *Raft) GetState() (int, bool) {
 func (rf *Raft) persist() {
 
     // Your code here (2C).
-    /*byte_array := new(bytes.Buffer)
 
+
+//    fmt.Printf("\n\nPersist test: currentTerm is %d and peer %d voted for %d\nLog state is %v\n",rf.currentTerm,rf.me,rf.votedFor,rf.log)
+    byte_array := new(bytes.Buffer)
     encoder := labgob.NewEncoder(byte_array)
+
     encoder.Encode(rf.currentTerm)
     encoder.Encode(rf.votedFor)
- 
-   //  rf.mu.Lock()            //Should we use lock over entire function?
-   //  defer rf.mu.Unlock()
-   log := rf.log
-   log_length := len(log)
-     
-   //  rf.mu.Unlock()
-   for index := 0; index < log_length; index++ {
-       encoder.Encode(log[index])
-       encoder.Encode(log[index])
-   }
-   encoded_array := byte_array.Bytes()
-   rf.persister.SaveRaftState(encoded_array)
+
+    rf.mu.Lock()            //Should we use lock over entire function?
+  //  defer rf.mu.Unlock()
+    
+    log := append([]LogEntry(nil), rf.log...)
+    log_length := len(log)
+    
+    rf.mu.Unlock()
+    //tmp := append([]int(nil), arr...)
+    for index := 0; index < log_length; index++ {
+        encoder.Encode(log[index])
+        encoder.Encode(log[index])
+
+    }
+    
+    encoded_array := byte_array.Bytes()
+    rf.persister.SaveRaftState(encoded_array)
+
+
+
 
 
     // Your code here (2C).
@@ -173,7 +183,7 @@ func (rf *Raft) persist() {
     // e.Encode(rf.yyy)
     // data := w.Bytes()
     // rf.persister.SaveRaftState(data)
-    */
+   
 }
 
 
@@ -181,7 +191,6 @@ func (rf *Raft) persist() {
 // restore previously persisted state.
 //
 func (rf *Raft) readPersist(data []byte) {
-    /*
     if data == nil || len(data) < 1 { // bootstrap without any state?
         return
     }
@@ -189,29 +198,46 @@ func (rf *Raft) readPersist(data []byte) {
 
     encoded_array := bytes.NewBuffer(data)
     decoder := labgob.NewDecoder(encoded_array)
- 
+
     var currentTerm int         //Do we need to provide type?
     var votedFor int
-    
+
+
     if (decoder.Decode(&currentTerm) != nil || decoder.Decode(&votedFor) != nil ){
-                        
-                        
-                            
+
+
+
     }else{
         rf.currentTerm = currentTerm
         rf.votedFor = votedFor
-                                              
+
     }
-                    
-    for{
+
+    for {
+        var logEntry_2 = LogEntry {}
         var logEntry = LogEntry {}                // Do we need to store decoded data as command and Term?
-        if (decoder.Decode(&logEntry) != nil ){
+
+        if (decoder.Decode(&logEntry) != nil || decoder.Decode(&logEntry_2) != nil ){
+
             break // is it correct to break after first nil?
+
         }else{
+
             rf.log = append(rf.log,logEntry)
+            
         }
-                                                  
+
     }
+
+    // is this necessary?
+
+    for id := 0; id < len(rf.peers); id++ {
+    //    rf.nextIndex[id] = len(rf.log)
+                               
+    }
+
+
+
 
     // Example:
     // r := bytes.NewBuffer(data)
@@ -225,7 +251,6 @@ func (rf *Raft) readPersist(data []byte) {
     //   rf.xxx = xxx
     //   rf.yyy = yyy
     // }
-    */
 }
 
 
@@ -276,7 +301,7 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
     if rf.currentTerm < peerTerm {
         rf.currentTerm = peerTerm
 
-        rf.persist() // Saving state
+        go rf.persist() // Saving state
         if rf.state == Follower {
             rf.addExtraTime = true
         }
@@ -360,7 +385,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         fmt.Printf("Join Index %d\n", joinIndex)
         rf.log = append(rf.log, args.LogEntries[joinIndex:]...)
 
-        rf.persist() // Saving state
+        go rf.persist() // Saving state
 
         // Discuss: What would happen if the packets get lost. would RPC return false. clues.
 
@@ -414,7 +439,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 
     if reply.VoteGranted {
         rf.votedFor = args.CandidateId
-        rf.persist() // Saving state
+        go rf.persist() // Saving state
         fmt.Printf("-> I the Peer %d say: Vote for cadidate %d Granted!\n",rf.me, args.CandidateId)
     } else {
         fmt.Printf("-> I the Peer %d say: Vote for cadidate %d Denied :/\n",rf.me, args.CandidateId)
@@ -592,7 +617,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     
     rf.log = append(rf.log, oneEntry)
     fmt.Printf("START %d: Adding command %d. Leader new log size: %d\n", command, command , len(rf.log))
-    rf.persist() // Saving state
+    go rf.persist() // Saving state
     rf.mu.Unlock()
 
     
@@ -799,7 +824,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
     rf.currentTerm = 0
 
-    rf.persist() // Saving state
+    go rf.persist() // Saving state
     rf.votedFor = -1
     rf.commitIndex = -1
     rf.lastApplied = -1
@@ -866,13 +891,13 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Lock()
                 rf.currentTerm++
 
-                rf.persist() // Saving state
+                go rf.persist() // Saving state
                 fmt.Printf("-- peer %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm)
 
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 rf.votedFor = rf.me
                 oldTerm := rf.currentTerm // cache Old term before sleep for logging purposes  
-                rf.persist() // Saving state
+                go rf.persist() // Saving state
                 rf.mu.Unlock()
                 
                 voteCount := 1
