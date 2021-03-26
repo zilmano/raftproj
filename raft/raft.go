@@ -100,6 +100,8 @@ type Raft struct {
 
     state PeerState
     gotHeartbeat bool
+
+    addExtraTime bool
     
 }
 
@@ -307,6 +309,9 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
     defer rf.mu.Unlock()
     if rf.currentTerm < peerTerm {
         rf.currentTerm = peerTerm
+        if rf.state == Follower {
+            rf.addExtraTime = true
+        }
         rf.state = Follower
         rf.votedFor = -1
         go rf.persist() // Saving state. we modify term and votedFor but only one call needed
@@ -926,6 +931,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
     rf.lastApplied = -1
     rf.state = Follower
     rf.gotHeartbeat = false
+    rf.addExtraTime = false
 
     rf.nextIndex = make([]int, len(rf.peers))
     rf.matchIndex = make([]int, len(rf.peers))
@@ -964,6 +970,16 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
        //         fmt.Printf("   peer %d  term %d -- follower -- : Set election timer to time %f\n", rf.me, rf.currentTerm, snoozeTime)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+
+                rf.mu.Lock()
+                addExtraTime := rf.addExtraTime
+                rf.mu.Unlock()
+
+                if addExtraTime {
+                    snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
+                    //fmt.Printf("   peer %d  term %d -- follower -- : My term jumped, snooze for more %f\n", rf.me, rf.currentTerm, snoozeTime)
+                    time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+                }
                 
                 rf.mu.Lock()  
          //       fmt.Printf("   peer %d term %d -- follower -- : my election timer had elapsed.\n",rf.me, rf.currentTerm)
@@ -972,6 +988,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     rf.state = Candidate
                 }
                 rf.gotHeartbeat = false
+                rf.addExtraTime = false
                 rf.mu.Unlock()
             
 
