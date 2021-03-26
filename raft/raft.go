@@ -44,10 +44,10 @@ import "bytes"
 //
 
 
-const RANDOM_TIMER_MAX = 390 // max value in ms
-const RANDOM_TIMER_MIN = 130 // max value in ms
+const RANDOM_TIMER_MAX = 750 // max value in ms
+const RANDOM_TIMER_MIN = 250 // max value in ms
 const NETWORK_DELAY_BOUND = 10 // max value in ms
-const HEARTBEAT_RATE = 9.0 // in hz, n beats a second
+const HEARTBEAT_RATE = 5.0 // in hz, n beats a second
 
 type ApplyMsg struct {
     CommandValid bool
@@ -293,6 +293,8 @@ type AppendEntriesReply struct {
     // Your data here (2A).
     CurrentTerm int
     Success bool
+    ConflictTerm int
+    ConflictTermFirstIndex int 
 }
 
 func (rf *Raft) CheckTerm(peerTerm int) bool {
@@ -353,15 +355,26 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
     
     rf.gotHeartbeat = true
         
-    fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d. logEntries is %v\n",args.PrevLogIndex,((len(rf.log))), args.LogEntries)
+    // fmt.Printf("\nchecking some false conditions. PrevLogIndex of leader is %d and length of our log is %d. logEntries is %v\n",args.PrevLogIndex,((len(rf.log))), args.LogEntries)
     if args.PrevLogIndex >= len(rf.log) {
         reply.Success = false
+        reply.ConflictTerm = 0
+        reply.ConflictTermFirstIndex = len(rf.log)
         return
     }
 
     if((args.PrevLogIndex > -1) && (rf.log[args.PrevLogIndex].Term != args.PrevLogTerm )){
-        fmt.Printf("\nsuccess set to false\n")
+        // fmt.Printf("\nsuccess set to false\n")
         reply.Success = false
+        reply.ConflictTerm = rf.log[args.PrevLogIndex].Term
+        for i := args.PrevLogIndex; i >= 0; i-- {
+            if rf.log[i].Term != reply.ConflictTerm {
+                reply.ConflictTermFirstIndex = i+1
+                return
+            }
+
+        }
+        reply.ConflictTermFirstIndex = 0
         return
     }
 
@@ -701,17 +714,26 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             rf.nextIndex[serverId] = latchLogLength // len(rf.log())
                         
                             fmt.Printf("START %d: Recieve successReply AppendEntry for peer %d latchLogLength %d \n", command, serverId, latchLogLength)
-                            fmt.Printf("START %d: DBG:: rf.matchIndex  %v \n", command, rf.matchIndex)
+                            // fmt.Printf("START %d: DBG:: rf.matchIndex  %v \n", command, rf.matchIndex)
                             
                             rf.mu.Unlock()
                         // TODO: That was a cool bug here, with nextIndex being decremented when the message is not delivered
                         } else  {
                             fmt.Printf("START %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, serverId)
                             rf.mu.Lock()
+                            defer rf.mu.Unlock()
                             if rf.nextIndex[serverId] != 0 {
-                                rf.nextIndex[serverId]-- 
+                                nextIndex := rf.nextIndex[serverId]-1
+                                //rf.nextIndex[serverId]-- 
+                                for ;nextIndex > reply.ConflictTermFirstIndex; nextIndex-- {
+                                    if rf.log[nextIndex-1].Term == reply.ConflictTerm {
+                                        rf.nextIndex[serverId] = nextIndex
+                                        return
+                                    }
+                                }
+                            
+                                rf.nextIndex[serverId] = reply.ConflictTermFirstIndex
                             }
-                            rf.mu.Unlock()
                         } 
                     } (id)
                 }
