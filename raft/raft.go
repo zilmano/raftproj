@@ -44,7 +44,7 @@ import "bytes"
 //
 
 
-const RANDOM_TIMER_MAX = 600 // max value in ms
+const RANDOM_TIMER_MAX = 400 // max value in ms
 const RANDOM_TIMER_MIN = 200 // max value in ms
 const NETWORK_DELAY_BOUND = 10 // max value in ms
 const HEARTBEAT_RATE = 5.0 // in hz, n beats a second
