@@ -939,7 +939,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 
     
         rf.nextIndex[id] = 0
-        rf.matchIndex[id] = 0
+        rf.matchIndex[id] = -1
     }
 
  //   fmt.Printf("Finish 'Making' peer %d...\n", rf.me)
@@ -1030,7 +1030,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         // Initialize leader nextIndex and match index
                         for id:=0; id < numPeers; id++{
                             rf.nextIndex[id] = len(rf.log)
-                            rf.matchIndex[id] = 0
+                            rf.matchIndex[id] = -1
                         }
 
                         fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d and details of replies is %v\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2,replies)
