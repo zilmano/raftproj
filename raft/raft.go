@@ -154,7 +154,7 @@ func (rf *Raft) persist() {
     byte_array := new(bytes.Buffer)
     encoder := labgob.NewEncoder(byte_array)
 
-    rf.mu.Lock()
+    //rf.mu.Lock()
 //    defer rf.mu.Unlock()
 
     encoder.Encode(rf.currentTerm)
@@ -165,7 +165,7 @@ func (rf *Raft) persist() {
     
     log := append([]LogEntry(nil), rf.log...) // making a copy of log before releasing log
 
-    rf.mu.Unlock()
+    //rf.mu.Unlock()
 
     log_length := len(log)
     
@@ -306,7 +306,7 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
         rf.currentTerm = peerTerm
         rf.state = Follower
         rf.votedFor = -1
-        go rf.persist() // Saving state
+        rf.persist() // Saving state
         
         rf.gotHeartbeat = false
         return false
@@ -397,7 +397,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
         //fmt.Printf("Join Index %d\n", joinIndex)
         rf.log = append(rf.log, args.LogEntries[joinIndex:]...)
 
-        go rf.persist() // Saving state
+        rf.persist() // Saving state
 
         // Discuss: What would happen if the packets get lost. would RPC return false. clues.
 
@@ -451,7 +451,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 
     if reply.VoteGranted {
         rf.votedFor = args.CandidateId
-        go rf.persist() // Saving state
+        rf.persist() // Saving state
         //fmt.Printf("-> I the Peer %d say: Vote for cadidate %d Granted!\n",rf.me, args.CandidateId)
     } else {
         //fmt.Printf("-> I the Peer %d say: Vote for cadidate %d Denied :/\n",rf.me, args.CandidateId)
@@ -644,7 +644,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     oneEntry.Term = term
     
     rf.log = append(rf.log, oneEntry)
-    go rf.persist() // Saving state
+    rf.persist() // Saving state
     rf.mu.Unlock()
     fmt.Printf("START %d peer %d: Adding command %d. Leader new log size: %d\n", command, myId , command , len(rf.log))
     
@@ -915,13 +915,12 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Lock()
                 rf.currentTerm++
 
-                go rf.persist() // Saving state
                 fmt.Printf("-> peer %d term %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm-1, rf.currentTerm)
 
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 rf.votedFor = rf.me
                 oldTerm := rf.currentTerm // cache Old term before sleep for logging purposes  
-                go rf.persist() // Saving state
+                rf.persist() // Saving state
                 rf.mu.Unlock()
                 
                 //var replies = make([]RequestVoteReply, numPeers)
