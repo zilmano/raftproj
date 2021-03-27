@@ -1,5 +1,13 @@
 package raft
 
+/**********
+Group members:
+Oleg Zilman eid: oz572
+Shoaib Asif, eid: sq2887
+***********/
+
+
+
 //
 // this is an outline of the API that raft must expose to
 // the service (or tester). see comments below for
