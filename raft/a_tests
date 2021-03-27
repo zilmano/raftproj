@@ -1,0 +1,700 @@
+CONFIG:Random seed is:499413896298266472
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27032    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.573s
+CONFIG:Random seed is:2258642562964823641
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  120   27624    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.645s
+CONFIG:Random seed is:3142417053635471700
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.9  3  136   29990    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.904s
+CONFIG:Random seed is:4305891146092960794
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26442    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.613s
+CONFIG:Random seed is:4232623259053603932
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  116   25108    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.510s
+CONFIG:Random seed is:2114687759738480222
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  116   25818    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.585s
+CONFIG:Random seed is:2056116016672412917
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  116   25504    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.519s
+CONFIG:Random seed is:4128211684692681056
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.9  3  142   32478    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.934s
+CONFIG:Random seed is:1493063197760195579
+Test (2A): initial election ...
+  ... Passed --   3.1  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  122   27142    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.453s
+CONFIG:Random seed is:2446071980841226188
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  118   26612    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.425s
+CONFIG:Random seed is:1074458272650365688
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  126   28056    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.524s
+CONFIG:Random seed is:2637852594929365934
+Test (2A): initial election ...
+  ... Passed --   3.1  3   58   18930    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   26682    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.644s
+CONFIG:Random seed is:680115995965445864
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   26616    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.543s
+CONFIG:Random seed is:285573978457817223
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27846    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.556s
+CONFIG:Random seed is:4338311829941843664
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27090    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.608s
+CONFIG:Random seed is:4318651316384192793
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  124   27906    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.588s
+CONFIG:Random seed is:1299986351044737510
+Test (2A): initial election ...
+  ... Passed --   3.1  3   56   18360    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  114   25876    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.492s
+CONFIG:Random seed is:278941283259395428
+Test (2A): initial election ...
+  ... Passed --   3.1  3   56   18556    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  124   27930    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.724s
+CONFIG:Random seed is:238241939155296485
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  124   28020    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.712s
+CONFIG:Random seed is:4171183865269927699
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  116   26086    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.435s
+CONFIG:Random seed is:2465406617076977798
+Test (2A): initial election ...
+  ... Passed --   3.1  3   56   18432    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  126   27840    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.680s
+CONFIG:Random seed is:2293936438157318070
+Test (2A): initial election ...
+  ... Passed --   3.1  3   56   18668    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  130   28496    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.561s
+CONFIG:Random seed is:1063986922239459913
+Test (2A): initial election ...
+  ... Passed --   3.1  3   56   18556    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.3  3  116   25662    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.447s
+CONFIG:Random seed is:2445535113923936397
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26222    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.564s
+CONFIG:Random seed is:1883733061034252680
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26144    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.572s
+CONFIG:Random seed is:730037346129993540
+Test (2A): initial election ...
+  ... Passed --   3.1  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26950    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.568s
+CONFIG:Random seed is:4136234892537044303
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27160    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.571s
+CONFIG:Random seed is:1100677149424279853
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  116   25882    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.591s
+CONFIG:Random seed is:1622878149826001841
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27286    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.528s
+CONFIG:Random seed is:3478568207884399186
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26780    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.522s
+CONFIG:Random seed is:95531533397590702
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  116   26330    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.698s
+CONFIG:Random seed is:4290324151254659424
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  126   27888    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.592s
+CONFIG:Random seed is:2484586031396853763
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  118   26022    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.376s
+CONFIG:Random seed is:1012202871302881962
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   27114    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.492s
+CONFIG:Random seed is:2828570179738358321
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  126   28278    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.577s
+CONFIG:Random seed is:1618017220969398907
+Test (2A): initial election ...
+  ... Passed --   3.1  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  126   27746    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.585s
+CONFIG:Random seed is:225930402938457265
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27160    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.562s
+CONFIG:Random seed is:1014192816174097551
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27554    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.568s
+CONFIG:Random seed is:3705899369912848028
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   5.0  3  136   30746    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	8.089s
+CONFIG:Random seed is:1271392536206243749
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  116   26060    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.468s
+CONFIG:Random seed is:629335860018376107
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  120   26876    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.438s
+CONFIG:Random seed is:3802690181228440492
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  114   25498    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.545s
+CONFIG:Random seed is:2483909789488340720
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  120   27120    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.402s
+CONFIG:Random seed is:1668721439956296006
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27650    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.597s
+CONFIG:Random seed is:2297634964550076562
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  124   27332    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.459s
+CONFIG:Random seed is:3387049496525167863
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  118   26308    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.548s
+CONFIG:Random seed is:3480943230222549385
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  114   25326    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.482s
+CONFIG:Random seed is:1054173501993693100
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  116   26672    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.546s
+CONFIG:Random seed is:1401549920170980928
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  126   28686    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.619s
+CONFIG:Random seed is:1162092854385398088
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  126   28866    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.553s
+CONFIG:Random seed is:3194207391490115784
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  116   26122    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.423s
+CONFIG:Random seed is:1759566589878463125
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  118   26316    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.470s
+CONFIG:Random seed is:3693341933529760712
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  116   26708    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.467s
+CONFIG:Random seed is:4310614388213892150
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  124   28252    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.516s
+CONFIG:Random seed is:2554547472733780577
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  124   27816    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.480s
+CONFIG:Random seed is:2758597589732251821
+Test (2A): initial election ...
+  ... Passed --   3.1  3   56   18668    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  126   27824    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.734s
+CONFIG:Random seed is:3997242494592616346
+Test (2A): initial election ...
+  ... Passed --   3.1  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   26590    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.612s
+CONFIG:Random seed is:4308451395897955780
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   25900    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.553s
+CONFIG:Random seed is:1184260381421328605
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26772    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.602s
+CONFIG:Random seed is:2998686062525633680
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   26594    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.515s
+CONFIG:Random seed is:3355014568608673016
+Test (2A): initial election ...
+  ... Passed --   3.1  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  120   26876    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.522s
+CONFIG:Random seed is:4142862652045043966
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27650    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.584s
+CONFIG:Random seed is:812893545080130092
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27006    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.615s
+CONFIG:Random seed is:1983170653146301951
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   5.0  3  136   30510    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	8.003s
+CONFIG:Random seed is:3528705878497419520
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  120   27304    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.540s
+CONFIG:Random seed is:2918742578045770610
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  120   26570    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.459s
+CONFIG:Random seed is:4408430957250126384
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27674    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.518s
+CONFIG:Random seed is:861645747253741300
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   26428    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.541s
+CONFIG:Random seed is:3172378950002996901
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  118   27068    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.438s
+CONFIG:Random seed is:479882390511208055
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  118   26390    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.489s
+CONFIG:Random seed is:4140354111153223175
+Test (2A): initial election ...
+  ... Passed --   3.0  3   50   16534    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27216    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.471s
+CONFIG:Random seed is:2584284869318610635
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  126   28674    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.665s
+CONFIG:Random seed is:2868042372205831573
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  116   26552    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.583s
+CONFIG:Random seed is:2955647056701145216
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  118   26894    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.591s
+CONFIG:Random seed is:3776964717250864301
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27240    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.563s
+CONFIG:Random seed is:4107349983588435372
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  126   28082    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.559s
+CONFIG:Random seed is:1050513287608479920
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  122   27488    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.672s
+CONFIG:Random seed is:4037775235551253948
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  114   25262    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.511s
+CONFIG:Random seed is:1334902410994536896
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  124   28188    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.620s
+CONFIG:Random seed is:153795215152874713
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   26750    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.602s
+CONFIG:Random seed is:2774721443399373513
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  116   26460    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.590s
+CONFIG:Random seed is:1914180733890928871
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26478    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.531s
+CONFIG:Random seed is:417701021607618370
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  132   30366    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.664s
+CONFIG:Random seed is:3128774624015888120
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  124   28940    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.584s
+CONFIG:Random seed is:2873442948542795428
+Test (2A): initial election ...
+  ... Passed --   3.0  3   50   16634    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27624    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.452s
+CONFIG:Random seed is:386269967274334163
+Test (2A): initial election ...
+  ... Passed --   3.1  3   58   18926    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   26924    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.516s
+CONFIG:Random seed is:4036462459623292940
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.4  3  118   26030    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.523s
+CONFIG:Random seed is:3723796597738628746
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  124   28218    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.593s
+CONFIG:Random seed is:280851717730182366
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  118   26202    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.531s
+CONFIG:Random seed is:4333052284180749590
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27916    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.480s
+CONFIG:Random seed is:871607117754471538
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  124   27622    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.683s
+CONFIG:Random seed is:2343457488561328781
+Test (2A): initial election ...
+  ... Passed --   3.0  3   50   16634    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.3  3  114   25530    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.342s
+CONFIG:Random seed is:1681073431914767401
+Test (2A): initial election ...
+  ... Passed --   3.1  3   56   18668    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  126   28800    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.759s
+CONFIG:Random seed is:1437833648593078937
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  126   28644    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.585s
+CONFIG:Random seed is:1045286210642127157
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17208    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   26620    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.449s
+CONFIG:Random seed is:3146257335039010890
+Test (2A): initial election ...
+  ... Passed --   3.0  3   52   17312    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  122   27314    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.556s
+CONFIG:Random seed is:1586724331401247452
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.9  3  140   31774    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	8.052s
+CONFIG:Random seed is:959592671687610929
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  122   27452    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.514s
+CONFIG:Random seed is:990230085404929191
+Test (2A): initial election ...
+  ... Passed --   3.1  3   54   17990    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.6  3  128   28530    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.730s
+CONFIG:Random seed is:4076547966942191283
+Test (2A): initial election ...
+  ... Passed --   3.0  3   54   17882    0
+Test (2A): election after network failure ...
+1: cfg.checkOneLeader()1: done2: if the leader disconnects, a new one should be elected.2: done3: if the old leader rejoins, that shouldn't, disturb the new leader.3: done4: if there's no quorum, no leader should be elected4: done5:  if a quorum arises, it should elect a leader.5: done6: re-join of last node shouldn't prevent leader from existing.6: done  ... Passed --   4.5  3  120   27592    0
+PASS
+ok  	github.com/zilmano/raftproj/raft	7.491s
