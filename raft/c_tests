@@ -1,0 +1,1466 @@
+Next run
+CONFIG:Random seed is:965079138983412457
+Test (2C): basic persistence ...
+  ... Passed --   3.1  3   92   26426    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.098s
+Next run
+CONFIG:Random seed is:2303448833676349729
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2544  599390   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.224s
+Next run
+CONFIG:Random seed is:672328731374905479
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   51   13924    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.532s
+Next run
+CONFIG:Random seed is:1332804318482938029
+Test (2C): Figure 8 ...
+  ... Passed --  29.1  5 1488  354104   29
+PASS
+ok  	github.com/zilmano/raftproj/raft	29.079s
+Next run
+CONFIG:Random seed is:4436287670742396907
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1139  437575  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.451s
+complete!!
+Next run
+CONFIG:Random seed is:617482266365170671
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   94   26902    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.324s
+Next run
+CONFIG:Random seed is:4557250084302620663
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2562  601378   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.190s
+Next run
+CONFIG:Random seed is:4067424477058543637
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   47   13270    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.578s
+Next run
+CONFIG:Random seed is:2364037126665023184
+Test (2C): Figure 8 ...
+  ... Passed --  31.2  5 1690  400369   35
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.162s
+Next run
+CONFIG:Random seed is:2192665153719598094
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1152  442064  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.359s
+complete!!
+Next run
+CONFIG:Random seed is:3926705424535168997
+Test (2C): basic persistence ...
+  ... Passed --   3.6  3  106   29884    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.586s
+Next run
+CONFIG:Random seed is:2052415671802850448
+Test (2C): more persistence ...
+  ... Passed --  14.9  5 2462  580160   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.917s
+Next run
+CONFIG:Random seed is:4163977901364255601
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   53   14494    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.530s
+Next run
+CONFIG:Random seed is:630475596417918743
+Test (2C): Figure 8 ...
+  ... Passed --  31.1  5 1402  331541   26
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.070s
+Next run
+CONFIG:Random seed is:2726870662711145052
+Test (2C): unreliable agreement ...
+  ... Passed --   3.4  5 1239  469604  250
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.434s
+complete!!
+Next run
+CONFIG:Random seed is:2362412469187755974
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   93   26815    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.371s
+Next run
+CONFIG:Random seed is:552238002381115568
+Test (2C): more persistence ...
+  ... Passed --  14.7  5 2404  569296   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.735s
+Next run
+CONFIG:Random seed is:2213900593951215271
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   49   13742    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.370s
+Next run
+CONFIG:Random seed is:3168608105685984964
+Test (2C): Figure 8 ...
+  ... Passed --  32.2  5 1627  379677   26
+PASS
+ok  	github.com/zilmano/raftproj/raft	32.210s
+Next run
+CONFIG:Random seed is:1685341202731041176
+Test (2C): unreliable agreement ...
+  ... Passed --   1.9  5 1181  451955  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.890s
+complete!!
+Next run
+CONFIG:Random seed is:4264343735010422103
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   90   25854    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.423s
+Next run
+CONFIG:Random seed is:2437092269520738296
+Test (2C): more persistence ...
+  ... Passed --  15.5  5 2618  615738   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.458s
+Next run
+CONFIG:Random seed is:3300669777996319117
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   47   13180    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.469s
+Next run
+CONFIG:Random seed is:3955071841638283363
+Test (2C): Figure 8 ...
+  ... Passed --  30.4  5 1575  375646   35
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.359s
+Next run
+CONFIG:Random seed is:1155540707078843190
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1169  446635  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.383s
+complete!!
+Next run
+CONFIG:Random seed is:2435852590546493097
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   92   26344    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.288s
+Next run
+CONFIG:Random seed is:3590713626608375971
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2470  582152   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.965s
+Next run
+CONFIG:Random seed is:1971021140629014296
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   51   14108    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.436s
+Next run
+CONFIG:Random seed is:3894674561536678713
+Test (2C): Figure 8 ...
+  ... Passed --  35.2  5 1582  371027   33
+PASS
+ok  	github.com/zilmano/raftproj/raft	35.255s
+Next run
+CONFIG:Random seed is:1865010958467581440
+Test (2C): unreliable agreement ...
+  ... Passed --   1.8  5 1189  451388  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.778s
+complete!!
+Next run
+CONFIG:Random seed is:1006000427373930434
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3  101   28865    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.430s
+Next run
+CONFIG:Random seed is:2531943632826307423
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2458  580692   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.009s
+Next run
+CONFIG:Random seed is:2017927769592191524
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   51   14026    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.597s
+Next run
+CONFIG:Random seed is:3305138356544847618
+Test (2C): Figure 8 ...
+  ... Passed --  29.3  5 1473  345183   35
+PASS
+ok  	github.com/zilmano/raftproj/raft	29.327s
+Next run
+CONFIG:Random seed is:1149660797223581642
+Test (2C): unreliable agreement ...
+  ... Passed --   1.6  5 1170  450832  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.585s
+complete!!
+Next run
+CONFIG:Random seed is:1996472333331172504
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   90   25930    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.382s
+Next run
+CONFIG:Random seed is:4129571403850146625
+Test (2C): more persistence ...
+  ... Passed --  15.4  5 2602  612036   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.402s
+Next run
+CONFIG:Random seed is:3768289992993377416
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   60   16336    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.506s
+Next run
+CONFIG:Random seed is:3477608794288261318
+Test (2C): Figure 8 ...
+  ... Passed --  30.9  5 1491  343507   25
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.887s
+Next run
+CONFIG:Random seed is:234769547665189629
+Test (2C): unreliable agreement ...
+  ... Passed --   1.7  5 1171  446119  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.729s
+complete!!
+Next run
+CONFIG:Random seed is:925546356861302826
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   97   27517    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.273s
+Next run
+CONFIG:Random seed is:397031155112411185
+Test (2C): more persistence ...
+  ... Passed --  15.1  5 2530  596762   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.093s
+Next run
+CONFIG:Random seed is:1465993436596504543
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   53   14680    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.454s
+Next run
+CONFIG:Random seed is:648535413190626098
+Test (2C): Figure 8 ...
+  ... Passed --  31.1  5 1572  369379   34
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.109s
+Next run
+CONFIG:Random seed is:4273019484211673283
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1160  443501  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.376s
+complete!!
+Next run
+CONFIG:Random seed is:1243116308778758779
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   99   28037    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.433s
+Next run
+CONFIG:Random seed is:3256001106225495150
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2451  578147   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.969s
+Next run
+CONFIG:Random seed is:953925725758887986
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   55   14958    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.531s
+Next run
+CONFIG:Random seed is:80680892647339267
+Test (2C): Figure 8 ...
+  ... Passed --  26.6  5 1332  314347   25
+PASS
+ok  	github.com/zilmano/raftproj/raft	26.647s
+Next run
+CONFIG:Random seed is:1822326624111250179
+Test (2C): unreliable agreement ...
+  ... Passed --   1.6  5 1162  444433  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.603s
+complete!!
+Next run
+CONFIG:Random seed is:1433751456159904472
+Test (2C): basic persistence ...
+  ... Passed --   3.6  3   94   26834    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.649s
+Next run
+CONFIG:Random seed is:1492730081523872034
+Test (2C): more persistence ...
+  ... Passed --  15.5  5 2600  612772   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.497s
+Next run
+CONFIG:Random seed is:3606259064885337775
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   45   12712    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.457s
+Next run
+CONFIG:Random seed is:1828087930242572074
+Test (2C): Figure 8 ...
+  ... Passed --  31.0  5 1573  371286   23
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.977s
+Next run
+CONFIG:Random seed is:2661111868917273559
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1153  444282  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.377s
+complete!!
+Next run
+CONFIG:Random seed is:973722824750593487
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3  103   29193    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.309s
+Next run
+CONFIG:Random seed is:3912043730948081647
+Test (2C): more persistence ...
+  ... Passed --  15.4  5 2630  616754   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.378s
+Next run
+CONFIG:Random seed is:491933739102683243
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   46   13036    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.425s
+Next run
+CONFIG:Random seed is:1601090974300359456
+Test (2C): Figure 8 ...
+  ... Passed --  28.1  5 1239  296560   25
+PASS
+ok  	github.com/zilmano/raftproj/raft	28.103s
+Next run
+CONFIG:Random seed is:449757458490977006
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1160  445867  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.419s
+complete!!
+Next run
+CONFIG:Random seed is:2482502366078412452
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   89   25659    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.219s
+Next run
+CONFIG:Random seed is:4150293507067911099
+Test (2C): more persistence ...
+  ... Passed --  15.3  5 2565  604647   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.303s
+Next run
+CONFIG:Random seed is:2011604043285692333
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   46   13156    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.472s
+Next run
+CONFIG:Random seed is:4340309181359296643
+Test (2C): Figure 8 ...
+  ... Passed --  34.0  5 1476  343773   20
+PASS
+ok  	github.com/zilmano/raftproj/raft	34.051s
+Next run
+CONFIG:Random seed is:2312015553229284885
+Test (2C): unreliable agreement ...
+  ... Passed --   3.4  5 1248  476463  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.398s
+complete!!
+Next run
+CONFIG:Random seed is:2776040187598583163
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   90   25930    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.177s
+Next run
+CONFIG:Random seed is:2337716542217409947
+Test (2C): more persistence ...
+  ... Passed --  15.3  5 2536  597956   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.258s
+Next run
+CONFIG:Random seed is:3996279892031164053
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   60   16421    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.577s
+Next run
+CONFIG:Random seed is:4283770442528543832
+Test (2C): Figure 8 ...
+  ... Passed --  34.5  5 2008  482130   31
+PASS
+ok  	github.com/zilmano/raftproj/raft	34.538s
+Next run
+CONFIG:Random seed is:2581938264009427070
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1150  442796  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.373s
+complete!!
+Next run
+CONFIG:Random seed is:2094391660430711281
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   95   27097    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.188s
+Next run
+CONFIG:Random seed is:4065947252428511735
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2468  581022   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.961s
+Next run
+CONFIG:Random seed is:2236564926710544732
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   61   16454    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.539s
+Next run
+CONFIG:Random seed is:3062327729710238300
+Test (2C): Figure 8 ...
+  ... Passed --  30.4  5 1596  376850   24
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.448s
+Next run
+CONFIG:Random seed is:580565129730144127
+Test (2C): unreliable agreement ...
+  ... Passed --   1.8  5 1166  446497  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.759s
+complete!!
+Next run
+CONFIG:Random seed is:2480207511873157070
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   97   27639    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.314s
+Next run
+CONFIG:Random seed is:72814427926633650
+Test (2C): more persistence ...
+  ... Passed --  15.1  5 2494  586812   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.063s
+Next run
+CONFIG:Random seed is:549618345453598370
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.3  3   48   13506    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.349s
+Next run
+CONFIG:Random seed is:3993314974702417264
+Test (2C): Figure 8 ...
+  ... Passed --  34.1  5 1827  430894   26
+PASS
+ok  	github.com/zilmano/raftproj/raft	34.138s
+Next run
+CONFIG:Random seed is:2732896020907620395
+Test (2C): unreliable agreement ...
+  ... Passed --   1.6  5 1159  447131  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.558s
+complete!!
+Next run
+CONFIG:Random seed is:2632283732170647336
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   98   27684    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.449s
+Next run
+CONFIG:Random seed is:2969418194352625691
+Test (2C): more persistence ...
+  ... Passed --  14.8  5 2436  576278   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.784s
+Next run
+CONFIG:Random seed is:4036830310885393126
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   50   14092    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.425s
+Next run
+CONFIG:Random seed is:3013985487732282668
+Test (2C): Figure 8 ...
+  ... Passed --  25.9  5 1345  325591   39
+PASS
+ok  	github.com/zilmano/raftproj/raft	25.895s
+Next run
+CONFIG:Random seed is:3289756762607135271
+Test (2C): unreliable agreement ...
+  ... Passed --   1.5  5 1156  443802  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.478s
+complete!!
+Next run
+CONFIG:Random seed is:648027778169024123
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   87   25147    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.161s
+Next run
+CONFIG:Random seed is:750132000664134679
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2562  601530   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.257s
+Next run
+CONFIG:Random seed is:2892913446748441826
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   53   14490    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.397s
+Next run
+CONFIG:Random seed is:489633266032555278
+Test (2C): Figure 8 ...
+  ... Passed --  34.7  5 1929  464371   49
+PASS
+ok  	github.com/zilmano/raftproj/raft	34.669s
+Next run
+CONFIG:Random seed is:1831436872178665044
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1146  440710  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.360s
+complete!!
+Next run
+CONFIG:Random seed is:1367504287926727013
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   94   26870    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.238s
+Next run
+CONFIG:Random seed is:1052451635886620303
+Test (2C): more persistence ...
+  ... Passed --  14.9  5 2464  581654   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.881s
+Next run
+CONFIG:Random seed is:2358289737687780572
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   48   13630    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.438s
+Next run
+CONFIG:Random seed is:4442280813664091917
+Test (2C): Figure 8 ...
+  ... Passed --  30.6  5 1511  356551   24
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.656s
+Next run
+CONFIG:Random seed is:3191566912458665808
+Test (2C): unreliable agreement ...
+  ... Passed --   1.3  5 1145  441879  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.355s
+complete!!
+Next run
+CONFIG:Random seed is:23244204516802074
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   96   27308    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.251s
+Next run
+CONFIG:Random seed is:620006264724847088
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2504  590562   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.974s
+Next run
+CONFIG:Random seed is:545607304848461933
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   50   14009    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.480s
+Next run
+CONFIG:Random seed is:2285930435088750800
+Test (2C): Figure 8 ...
+  ... Passed --  31.5  5 1556  369928   28
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.476s
+Next run
+CONFIG:Random seed is:2281486473152021663
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1137  437491  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.396s
+complete!!
+Next run
+CONFIG:Random seed is:1025088975596717915
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   90   25950    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.251s
+Next run
+CONFIG:Random seed is:1717543367540188731
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2520  593102   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.158s
+Next run
+CONFIG:Random seed is:1763717997004298
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   51   14018    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.561s
+Next run
+CONFIG:Random seed is:337750882286734988
+Test (2C): Figure 8 ...
+  ... Passed --  35.0  5 1815  429005   31
+PASS
+ok  	github.com/zilmano/raftproj/raft	35.014s
+Next run
+CONFIG:Random seed is:518597985221938232
+Test (2C): unreliable agreement ...
+  ... Passed --   1.5  5 1161  441292  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.471s
+complete!!
+Next run
+CONFIG:Random seed is:3399787369180817627
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   97   27509    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.185s
+Next run
+CONFIG:Random seed is:1635083126518761139
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2440  577426   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.978s
+Next run
+CONFIG:Random seed is:4001788181140115067
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   55   14958    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.495s
+Next run
+CONFIG:Random seed is:3407867253038936548
+Test (2C): Figure 8 ...
+  ... Passed --  33.4  5 1441  335674   29
+PASS
+ok  	github.com/zilmano/raftproj/raft	33.373s
+Next run
+CONFIG:Random seed is:8797358899477928
+Test (2C): unreliable agreement ...
+  ... Passed --   1.8  5 1195  460888  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.824s
+complete!!
+Next run
+CONFIG:Random seed is:4585943877599706580
+Test (2C): basic persistence ...
+  ... Passed --   3.1  3   95   27043    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.121s
+Next run
+CONFIG:Random seed is:2113986648717418726
+Test (2C): more persistence ...
+  ... Passed --  14.6  5 2374  562498   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.626s
+Next run
+CONFIG:Random seed is:1355660913600910144
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   51   14206    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.441s
+Next run
+CONFIG:Random seed is:218468180349732842
+Test (2C): Figure 8 ...
+  ... Passed --  30.7  5 1619  381607   29
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.662s
+Next run
+CONFIG:Random seed is:909952013888915886
+Test (2C): unreliable agreement ...
+  ... Passed --   1.6  5 1170  444804  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.620s
+complete!!
+Next run
+CONFIG:Random seed is:1403076624052479362
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   97   27509    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.339s
+Next run
+CONFIG:Random seed is:4348229288909234706
+Test (2C): more persistence ...
+  ... Passed --  15.5  5 2597  610383   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.480s
+Next run
+CONFIG:Random seed is:606384578011281288
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   61   16458    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.555s
+Next run
+CONFIG:Random seed is:3578803023651179623
+Test (2C): Figure 8 ...
+  ... Passed --  29.4  5 1432  337445   23
+PASS
+ok  	github.com/zilmano/raftproj/raft	29.393s
+Next run
+CONFIG:Random seed is:794593310365073918
+Test (2C): unreliable agreement ...
+  ... Passed --   1.6  5 1179  452780  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.569s
+complete!!
+Next run
+CONFIG:Random seed is:2027017466984124780
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   99   28183    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.292s
+Next run
+CONFIG:Random seed is:2075300405741639783
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2460  580706   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.986s
+Next run
+CONFIG:Random seed is:448222318435667151
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   57   15510    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.571s
+Next run
+CONFIG:Random seed is:3641232460906603200
+Test (2C): Figure 8 ...
+  ... Passed --  31.9  5 1643  390558   28
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.954s
+Next run
+CONFIG:Random seed is:3543749830982583763
+Test (2C): unreliable agreement ...
+  ... Passed --   1.8  5 1170  451465  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.761s
+complete!!
+Next run
+CONFIG:Random seed is:4206869930588440326
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   96   27486    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.415s
+Next run
+CONFIG:Random seed is:1801947134176306188
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2548  602360   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.227s
+Next run
+CONFIG:Random seed is:4407588646214511928
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   43   12334    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.373s
+Next run
+CONFIG:Random seed is:2929158357397417972
+Test (2C): Figure 8 ...
+  ... Passed --  30.4  5 1479  347277   25
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.365s
+Next run
+CONFIG:Random seed is:3348000367259968879
+Test (2C): unreliable agreement ...
+  ... Passed --   1.6  5 1165  448970  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.636s
+complete!!
+Next run
+CONFIG:Random seed is:580598059011551574
+Test (2C): basic persistence ...
+  ... Passed --   3.1  3   92   26368    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.138s
+Next run
+CONFIG:Random seed is:4299460551950401524
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2490  588644   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.054s
+Next run
+CONFIG:Random seed is:55334103987150259
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   59   16174    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.547s
+Next run
+CONFIG:Random seed is:150744847928601351
+Test (2C): Figure 8 ...
+  ... Passed --  26.3  5 1281  300323   22
+PASS
+ok  	github.com/zilmano/raftproj/raft	26.323s
+Next run
+CONFIG:Random seed is:3006748036673974740
+Test (2C): unreliable agreement ...
+  ... Passed --   3.4  5 1271  476924  250
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.396s
+complete!!
+Next run
+CONFIG:Random seed is:4251234333590007744
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   94   26986    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.276s
+Next run
+CONFIG:Random seed is:387631117943410865
+Test (2C): more persistence ...
+  ... Passed --  14.8  5 2452  577580   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.796s
+Next run
+CONFIG:Random seed is:3384717192116833876
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   49   13738    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.476s
+Next run
+CONFIG:Random seed is:3478339951794539485
+Test (2C): Figure 8 ...
+  ... Passed --  35.3  5 1722  407767   23
+PASS
+ok  	github.com/zilmano/raftproj/raft	35.325s
+Next run
+CONFIG:Random seed is:2980627165852891085
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1149  442396  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.415s
+complete!!
+Next run
+CONFIG:Random seed is:4195079707327680284
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   96   27454    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.320s
+Next run
+CONFIG:Random seed is:4379273248483007897
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2562  602138   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.229s
+Next run
+CONFIG:Random seed is:1766720031848995132
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   61   16458    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.579s
+Next run
+CONFIG:Random seed is:4172910595190447289
+Test (2C): Figure 8 ...
+  ... Passed --  31.2  5 1470  348157   29
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.231s
+Next run
+CONFIG:Random seed is:469276907767982565
+Test (2C): unreliable agreement ...
+  ... Passed --   3.5  5 1261  474961  251
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.521s
+complete!!
+Next run
+CONFIG:Random seed is:4228644980986608340
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   99   28069    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.296s
+Next run
+CONFIG:Random seed is:2119678838748446087
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2526  595476   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.212s
+Next run
+CONFIG:Random seed is:1951101892431943698
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   49   13464    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.532s
+Next run
+CONFIG:Random seed is:4281660785864523517
+Test (2C): Figure 8 ...
+  ... Passed --  31.9  5 1693  403404   30
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.889s
+Next run
+CONFIG:Random seed is:4065301779319154411
+Test (2C): unreliable agreement ...
+  ... Passed --   1.5  5 1152  442931  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.507s
+complete!!
+Next run
+CONFIG:Random seed is:245135336252584356
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   90   25914    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.156s
+Next run
+CONFIG:Random seed is:891251123973721350
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2512  592424   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.039s
+Next run
+CONFIG:Random seed is:584612223742473044
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   54   14622    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.508s
+Next run
+CONFIG:Random seed is:3021654339459495830
+Test (2C): Figure 8 ...
+  ... Passed --  30.5  5 1848  441814   24
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.537s
+Next run
+CONFIG:Random seed is:353576050383262886
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1161  446046  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.418s
+complete!!
+Next run
+CONFIG:Random seed is:2570322832349827778
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   91   26133    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.305s
+Next run
+CONFIG:Random seed is:1158995290956502799
+Test (2C): more persistence ...
+  ... Passed --  14.9  5 2476  583880   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.954s
+Next run
+CONFIG:Random seed is:596746753297174826
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   52   14446    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.412s
+Next run
+CONFIG:Random seed is:1186729742698098369
+Test (2C): Figure 8 ...
+  ... Passed --  33.4  5 1646  394992   27
+PASS
+ok  	github.com/zilmano/raftproj/raft	33.367s
+Next run
+CONFIG:Random seed is:3364614641481100477
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1159  451304  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.382s
+complete!!
+Next run
+CONFIG:Random seed is:460168456753814036
+Test (2C): basic persistence ...
+  ... Passed --   3.6  3  107   30373    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.630s
+Next run
+CONFIG:Random seed is:1335183745960004594
+Test (2C): more persistence ...
+  ... Passed --  14.9  5 2450  578420   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.954s
+Next run
+CONFIG:Random seed is:3941338131529108498
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   50   13876    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.407s
+Next run
+CONFIG:Random seed is:2536870687465013190
+Test (2C): Figure 8 ...
+  ... Passed --  24.7  5 1020  235642   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	24.689s
+Next run
+CONFIG:Random seed is:1096279397031987933
+Test (2C): unreliable agreement ...
+  ... Passed --   1.3  5 1159  443681  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.355s
+complete!!
+Next run
+CONFIG:Random seed is:3707672162401804736
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   99   28037    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.379s
+Next run
+CONFIG:Random seed is:1788215451483428913
+Test (2C): more persistence ...
+  ... Passed --  16.0  5 2720  640456   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.977s
+Next run
+CONFIG:Random seed is:1625054398831946951
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   57   15816    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.576s
+Next run
+CONFIG:Random seed is:3686356894755163349
+Test (2C): Figure 8 ...
+  ... Passed --  28.6  5 1474  348141   25
+PASS
+ok  	github.com/zilmano/raftproj/raft	28.604s
+Next run
+CONFIG:Random seed is:426070212363417096
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1156  443929  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.363s
+complete!!
+Next run
+CONFIG:Random seed is:2912587441512870683
+Test (2C): basic persistence ...
+  ... Passed --   3.5  3  108   30268    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.539s
+Next run
+CONFIG:Random seed is:4208431201996025827
+Test (2C): more persistence ...
+  ... Passed --  14.8  5 2458  579690   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.848s
+Next run
+CONFIG:Random seed is:2957839432095791277
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.6  3   49   13464    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.580s
+Next run
+CONFIG:Random seed is:125150543354580377
+Test (2C): Figure 8 ...
+  ... Passed --  31.1  5 1503  353086   21
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.105s
+Next run
+CONFIG:Random seed is:3470856901409665986
+Test (2C): unreliable agreement ...
+  ... Passed --   3.4  5 1255  476804  251
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.372s
+complete!!
+Next run
+CONFIG:Random seed is:4370833753828276531
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   96   27596    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.199s
+Next run
+CONFIG:Random seed is:2373077528448986386
+Test (2C): more persistence ...
+  ... Passed --  15.3  5 2576  606098   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.316s
+Next run
+CONFIG:Random seed is:3082388414642864413
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   51   14018    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.476s
+Next run
+CONFIG:Random seed is:2466947023297235132
+Test (2C): Figure 8 ...
+  ... Passed --  27.3  5 1331  308046   19
+PASS
+ok  	github.com/zilmano/raftproj/raft	27.298s
+Next run
+CONFIG:Random seed is:4357074548238942091
+Test (2C): unreliable agreement ...
+  ... Passed --   3.9  5 1302  487754  248
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.872s
+complete!!
+Next run
+CONFIG:Random seed is:2061593392127044757
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   91   26111    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.202s
+Next run
+CONFIG:Random seed is:3515189789852457552
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2472  584128   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.036s
+Next run
+CONFIG:Random seed is:661744313392767403
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   52   14576    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.455s
+Next run
+CONFIG:Random seed is:1744956042492092762
+Test (2C): Figure 8 ...
+  ... Passed --  29.3  5 1464  345842   26
+PASS
+ok  	github.com/zilmano/raftproj/raft	29.311s
+Next run
+CONFIG:Random seed is:3581762120393997317
+Test (2C): unreliable agreement ...
+  ... Passed --   1.3  5 1146  439032  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.353s
+complete!!
+Next run
+CONFIG:Random seed is:3366621021039661541
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3  104   29766    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.424s
+Next run
+CONFIG:Random seed is:1625339722101076792
+Test (2C): more persistence ...
+  ... Passed --  15.5  5 2610  614620   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.488s
+Next run
+CONFIG:Random seed is:958434289172025593
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   47   13274    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.444s
+Next run
+CONFIG:Random seed is:1916217196657643889
+Test (2C): Figure 8 ...
+  ... Passed --  35.5  5 2017  480997   39
+PASS
+ok  	github.com/zilmano/raftproj/raft	35.528s
+Next run
+CONFIG:Random seed is:1846670481259585237
+Test (2C): unreliable agreement ...
+  ... Passed --   1.3  5 1153  442741  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.341s
+complete!!
+Next run
+CONFIG:Random seed is:3381721557620963834
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3   94   26806    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.430s
+Next run
+CONFIG:Random seed is:2550727936113024737
+Test (2C): more persistence ...
+  ... Passed --  14.7  5 2438  576766   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.723s
+Next run
+CONFIG:Random seed is:3687931814429386750
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   49   13738    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.444s
+Next run
+CONFIG:Random seed is:227244789582181784
+Test (2C): Figure 8 ...
+  ... Passed --  29.7  5 1337  305704   28
+PASS
+ok  	github.com/zilmano/raftproj/raft	29.722s
+Next run
+CONFIG:Random seed is:2461326892049161102
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1143  441630  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.435s
+complete!!
+Next run
+CONFIG:Random seed is:1029632601632102545
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3  101   28499    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.246s
+Next run
+CONFIG:Random seed is:944905703220639554
+Test (2C): more persistence ...
+  ... Passed --  15.2  5 2550  600402   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.215s
+Next run
+CONFIG:Random seed is:1799978121873470137
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   55   14928    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.551s
+Next run
+CONFIG:Random seed is:1660666547200099386
+Test (2C): Figure 8 ...
+  ... Passed --  31.0  5 1650  392516   37
+PASS
+ok  	github.com/zilmano/raftproj/raft	31.044s
+Next run
+CONFIG:Random seed is:1815285992923877340
+Test (2C): unreliable agreement ...
+  ... Passed --   1.9  5 1192  453715  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.930s
+complete!!
+Next run
+CONFIG:Random seed is:1843806945182045887
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   95   27413    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.279s
+Next run
+CONFIG:Random seed is:1668681706484071718
+Test (2C): more persistence ...
+  ... Passed --  14.9  5 2454  580048   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.950s
+Next run
+CONFIG:Random seed is:258600576209416041
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   49   13742    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.366s
+Next run
+CONFIG:Random seed is:1091353488132251697
+Test (2C): Figure 8 ...
+  ... Passed --  30.6  5 1401  329827   26
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.566s
+Next run
+CONFIG:Random seed is:1433565075070920887
+Test (2C): unreliable agreement ...
+  ... Passed --   3.4  5 1234  464634  248
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.393s
+complete!!
+Next run
+CONFIG:Random seed is:962997931515647764
+Test (2C): basic persistence ...
+  ... Passed --   3.6  3   96   27256    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.579s
+Next run
+CONFIG:Random seed is:4582655867062801598
+Test (2C): more persistence ...
+  ... Passed --  14.9  5 2412  570340   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.899s
+Next run
+CONFIG:Random seed is:1018329033261326191
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   47   13274    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.418s
+Next run
+CONFIG:Random seed is:4374986799899582390
+Test (2C): Figure 8 ...
+  ... Passed --  32.8  5 1466  350556   27
+PASS
+ok  	github.com/zilmano/raftproj/raft	32.810s
+Next run
+CONFIG:Random seed is:697925235904708293
+Test (2C): unreliable agreement ...
+  ... Passed --   3.4  5 1273  479980  251
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.437s
+complete!!
+Next run
+CONFIG:Random seed is:2854421123740310777
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   88   25508    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.274s
+Next run
+CONFIG:Random seed is:1319501039924084525
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2470  582298   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.036s
+Next run
+CONFIG:Random seed is:1819624715700967449
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   53   14572    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.489s
+Next run
+CONFIG:Random seed is:4288117689436732800
+Test (2C): Figure 8 ...
+  ... Passed --  33.1  5 1577  371327   36
+PASS
+ok  	github.com/zilmano/raftproj/raft	33.100s
+Next run
+CONFIG:Random seed is:4263643643935232038
+Test (2C): unreliable agreement ...
+  ... Passed --   1.5  5 1153  444627  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.505s
+complete!!
+Next run
+CONFIG:Random seed is:2492182654576323592
+Test (2C): basic persistence ...
+  ... Passed --   3.4  3  100   28342    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.379s
+Next run
+CONFIG:Random seed is:2417750485985789724
+Test (2C): more persistence ...
+  ... Passed --  15.0  5 2494  588400   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.024s
+Next run
+CONFIG:Random seed is:17366723088745340
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   45   12618    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.475s
+Next run
+CONFIG:Random seed is:2663378863652378152
+Test (2C): Figure 8 ...
+  ... Passed --  30.5  5 1538  364549   36
+PASS
+ok  	github.com/zilmano/raftproj/raft	30.478s
+Next run
+CONFIG:Random seed is:3116220789199428380
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1153  444659  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.412s
+complete!!
+Next run
+CONFIG:Random seed is:2665163940470594581
+Test (2C): basic persistence ...
+  ... Passed --   3.2  3   93   26513    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.212s
+Next run
+CONFIG:Random seed is:838105067572553439
+Test (2C): more persistence ...
+  ... Passed --  15.7  5 2674  627458   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	15.712s
+Next run
+CONFIG:Random seed is:4397462009588849441
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   47   13274    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.531s
+Next run
+CONFIG:Random seed is:949509862795406838
+Test (2C): Figure 8 ...
+  ... Passed --  33.3  5 1530  354056   22
+PASS
+ok  	github.com/zilmano/raftproj/raft	33.333s
+Next run
+CONFIG:Random seed is:1145730168991899512
+Test (2C): unreliable agreement ...
+  ... Passed --   1.4  5 1156  435262  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.418s
+complete!!
+Next run
+CONFIG:Random seed is:2089666501668708486
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   96   27426    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.281s
+Next run
+CONFIG:Random seed is:4580965457297543204
+Test (2C): more persistence ...
+  ... Passed --  14.7  5 2440  576898   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.712s
+Next run
+CONFIG:Random seed is:657135944204698504
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.4  3   48   13515    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.380s
+Next run
+CONFIG:Random seed is:3669100806807023248
+Test (2C): Figure 8 ...
+  ... Passed --  34.9  5 1802  425587   36
+PASS
+ok  	github.com/zilmano/raftproj/raft	34.947s
+Next run
+CONFIG:Random seed is:3377667449217366408
+Test (2C): unreliable agreement ...
+  ... Passed --   1.5  5 1147  439545  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.482s
+complete!!
+Next run
+CONFIG:Random seed is:2159877315410320929
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3  101   28537    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.291s
+Next run
+CONFIG:Random seed is:25646587666194015
+Test (2C): more persistence ...
+  ... Passed --  14.9  5 2460  579612   16
+PASS
+ok  	github.com/zilmano/raftproj/raft	14.931s
+Next run
+CONFIG:Random seed is:4496110369102941294
+Test (2C): partitioned leader and one follower crash, leader restarts ...
+  ... Passed --   1.5  3   46   13064    4
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.484s
+Next run
+CONFIG:Random seed is:4212923369524360615
+Test (2C): Figure 8 ...
+  ... Passed --  34.4  5 1668  389596   29
+PASS
+ok  	github.com/zilmano/raftproj/raft	34.375s
+Next run
+CONFIG:Random seed is:2549254473397757894
+Test (2C): unreliable agreement ...
+  ... Passed --   1.5  5 1153  441507  246
+PASS
+ok  	github.com/zilmano/raftproj/raft	1.501s
+complete!!
+Next run
+CONFIG:Random seed is:2654455472997709392
+Test (2C): basic persistence ...
+  ... Passed --   3.3  3   94   26790    6
+PASS
+ok  	github.com/zilmano/raftproj/raft	3.272s
+Next run
+CONFIG:Random seed is:4427979182973487975
+Test (2C): more persistence ...
