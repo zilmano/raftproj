@@ -161,9 +161,7 @@ func (rf *Raft) persist() {
 
     encoder.Encode(rf.currentTerm)
     encoder.Encode(rf.votedFor)
-    encoder.Encode(rf.commitIndex)
     
-
 //    rf.mu.Lock()            //Should we use lock over entire function?
   //  defer rf.mu.Unlock()
     
@@ -211,8 +209,7 @@ func (rf *Raft) readPersist(data []byte) {
 
     var currentTerm int         //Do we need to provide type?
     var votedFor int
-    var commitIndex int 
-
+    
 
     rf.mu.Lock()
     if (decoder.Decode(&currentTerm) != nil || decoder.Decode(&votedFor) != nil ){
@@ -223,8 +220,6 @@ func (rf *Raft) readPersist(data []byte) {
         rf.votedFor = votedFor
     }
 
-    decoder.Decode(&commitIndex)
-    rf.commitIndex = commitIndex
     for {
         var logEntry = LogEntry {}                // Do we need to store decoded data as command and Term?
         
@@ -311,13 +306,13 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
     defer rf.mu.Unlock()
     if rf.currentTerm < peerTerm {
         rf.currentTerm = peerTerm
-
-        go rf.persist() // Saving state
         if rf.state == Follower {
             rf.addExtraTime = true
         }
         rf.state = Follower
         rf.votedFor = -1
+        go rf.persist() // Saving state
+        
         rf.gotHeartbeat = false
         return false
     } 
@@ -426,14 +421,11 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
             rf.commitIndex = len(rf.log)-1
         }
         //fmt.Printf("Follower comming to log\n")
-        go rf.persist() // Saving state
         rf.ApplyChannel(rf.commitIndex, prevCommitIndex)
 
     }
 
  }
-
-
 
 //
 // example RequestVote RPC handler.
@@ -560,7 +552,7 @@ func (rf *Raft) sendHeartbeats() {
 }
 
 
-func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
+func (rf *Raft) sendVoteRequests(numPeers int, electionCh chan bool, voteCount *int) {
  
     //fmt.Printf("   peer %d candidate: Sending requests to %d peers\n", rf.me, numPeers)
  
@@ -586,20 +578,36 @@ func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
 
     for id:=0; id < numPeers; id++ {
         if id != myId  {
-            go func(server int, args *RequestVoteArgs, reply *RequestVoteReply) {
-               ok := rf.sendRequestVote(server, args, reply)
-               rf.CheckTerm(reply.FollowerTerm)
+            go func(server int, args *RequestVoteArgs) {
+               var reply RequestVoteReply
+               ok := rf.sendRequestVote(server, args, &reply)
+               if !rf.CheckTerm(reply.FollowerTerm) {
+                    <- electionCh
+                    //fmt.Printf("rf %d goroutine %d: got vote from a higher term, quitting", myId, server)
+                    return
+               }
                // TODO: Do I need the lock for reading onle?
                rf.mu.Lock()
-               if !ok {
-                 reply.VoteGranted = false  
+               if ok {
+                    if reply.VoteGranted {
+                        *voteCount++
+                        //fmt.Printf("rf %d goroutine peer %d: got vote.\n", myId, server)
+                        if *voteCount > numPeers/2 {
+                            //fmt.Printf("rf %d goroutine peer %d: got Enough votes. Syncronizing ONE .\n", myId, server)
+                            <- electionCh
+                            //fmt.Printf("rf %d goroutine peer %d: got Enough votes. Syncronizing TWO.\n", myId, server)
+                        }
+                        //fmt.Printf("rf %d goroutine %d: number of votes %d", myId, server, *voteCount)
+                        
+                    } 
+                        //fmt.Printf("Peer %d candidate: Send request to peer %d worked\n", rf.me, server)
+               } else  {
+                 //reply.VoteGranted = false  
                  //fmt.Printf("Peer %d candidate: Send request to peer %d failed, no connection.\n", rf.me, server)
-               } else {
-                  //fmt.Printf("Peer %d candidate: Send request to peer %d worked\n", rf.me, server)
                }
                rf.mu.Unlock()
     
-            } (id, &args, &replies[id])
+            } (id, &args)
         }
     }
 }               
@@ -788,7 +796,6 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                     rf.commitIndex = N     // Discuss: 3. should we use lock?
                     //rf.log[N].Term = rf.currentTerm
                     if rf.commitIndex > prevCommitIndex {
-                        go rf.persist() // Saving state
                         rf.ApplyChannel(N, prevCommitIndex)
                     }
                     rf.mu.Unlock()
@@ -935,32 +942,34 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 go rf.persist() // Saving state
                 rf.mu.Unlock()
                 
-                voteCount := 1
-                var replies = make([]RequestVoteReply, numPeers)
+                //var replies = make([]RequestVoteReply, numPeers)
                 
-                
-                rf.sendVoteRequests(replies, numPeers)
+                replyCh  := make(chan bool)
+                var voteCount int = 1
+                rf.sendVoteRequests(numPeers, replyCh, &voteCount)
 
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
                 //fmt.Printf("   peer %d term %d -- candidate -- :Set snooze timer to time %f\n", rf.me, rf.currentTerm, snoozeTime)
-                time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+                go func () {
+                    time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+                    <-replyCh
+                    //fmt.Printf("rf %d:  timer goroutine finished  votecount %d", rf.me, voteCount)
+                } ()       
                 
+                //fmt.Printf("rf %d:  wating for recv event to happen voteCount %d", rf.me, voteCount)
+                replyCh <- true
+                close(replyCh)
+
                 rf.mu.Lock()
                 fmt.Printf("-- peer %d term %d -- candidate -- :Waking up from snooze to count votes. %f\n", rf.me, oldTerm, snoozeTime)
                 if (rf.state != Follower) {
                     fmt.Printf("-- peer %d term %d -- candidate --: Start Counting votes...\n\n",rf.me, rf.currentTerm)
                     
-                    for id:=0; id < numPeers; id++ {
-                        if id != rf.me && replies[id].VoteGranted {
-                            voteCount++
-                        }    
-                    }
-
                     if voteCount > numPeers/2 {
                         // Initialize leader nextIndex and match index
                         for id:=0; id < numPeers; id++{
                             rf.nextIndex[id] = len(rf.log)
-                            rf.matchIndex[id] = 0
+                            rf.matchIndex[id] = -1
                         }
 
                         fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
