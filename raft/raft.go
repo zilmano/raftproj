@@ -576,7 +576,7 @@ func (rf *Raft) sendHeartbeats() {
 }
 
 
-func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
+func (rf *Raft) sendVoteRequests(numPeers int, electionCh chan bool, voteCount *int) {
  
 //    fmt.Printf("   peer %d candidate: Sending requests to %d peers\n", rf.me, numPeers)
  
@@ -602,20 +602,36 @@ func (rf *Raft) sendVoteRequests(replies []RequestVoteReply, numPeers int) {
 
     for id:=0; id < numPeers; id++ {
         if id != myId  {
-            go func(server int, args *RequestVoteArgs, reply *RequestVoteReply) {
-               ok := rf.sendRequestVote(server, args, reply)
-               rf.CheckTerm(reply.FollowerTerm)
+            go func(server int, args *RequestVoteArgs) {
+               var reply RequestVoteReply
+               ok := rf.sendRequestVote(server, args, &reply)
+               if !rf.CheckTerm(reply.FollowerTerm) {
+                    <- electionCh
+                    //fmt.Printf("rf %d goroutine %d: got vote from a higher term, quitting", myId, server)
+                    return
+               }
                // TODO: Do I need the lock for reading onle?
                rf.mu.Lock()
-               if !ok {
-                 reply.VoteGranted = false  
-      //           fmt.Printf("Peer %d candidate: Send request to peer %d failed, no connection.\n", rf.me, server)
-               } else {
-        //          fmt.Printf("Peer %d candidate: Send request to peer %d worked\n", rf.me, server)
+               if ok {
+                    if reply.VoteGranted {
+                        *voteCount++
+                        //fmt.Printf("rf %d goroutine peer %d: got vote.\n", myId, server)
+                        if *voteCount > numPeers/2 {
+                            //fmt.Printf("rf %d goroutine peer %d: got Enough votes. Syncronizing ONE .\n", myId, server)
+                            <- electionCh
+                            //fmt.Printf("rf %d goroutine peer %d: got Enough votes. Syncronizing TWO.\n", myId, server)
+                        }
+                        //fmt.Printf("rf %d goroutine %d: number of votes %d", myId, server, *voteCount)
+                        
+                    } 
+                        //fmt.Printf("Peer %d candidate: Send request to peer %d worked\n", rf.me, server)
+               } else  {
+                 //reply.VoteGranted = false  
+                 //fmt.Printf("Peer %d candidate: Send request to peer %d failed, no connection.\n", rf.me, server)
                }
                rf.mu.Unlock()
     
-            } (id, &args, &replies[id])
+            } (id, &args)
         }
     }
 }               
@@ -1006,26 +1022,27 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Unlock()
                 
                 voteCount := 1
-                var replies = make([]RequestVoteReply, numPeers)
+                //var replies = make([]RequestVoteReply, numPeers)
                 
-                
-                rf.sendVoteRequests(replies, numPeers)
+                replyCh  := make(chan bool)
+                rf.sendVoteRequests(numPeers, replyCh, &voteCount)
 
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
 //                fmt.Printf("   peer %d term %d -- candidate -- :Set snooze timer to time %f\n", rf.me, rf.currentTerm, snoozeTime)
-                time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
-                
+                go func () {
+                    time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
+                    <-replyCh
+                    //fmt.Printf("rf %d:  timer goroutine finished  votecount %d", rf.me, voteCount)
+                } ()   
+
+                replyCh <- true
+                close(replyCh)
+
                 rf.mu.Lock()
   //              fmt.Printf("   peer %d term %d -- candidate -- :Waking up from snooze to count votes. %f\n", rf.me, oldTerm, snoozeTime)
                 if (rf.state != Follower) {
     //                fmt.Printf("-> Peer %d term %d -- candidate --: Start Counting votes...\n\n",rf.me, rf.currentTerm)
                     
-                    for id:=0; id < numPeers; id++ {
-                        if id != rf.me && replies[id].VoteGranted {
-                            voteCount++
-                        }    
-                    }
-
                     if voteCount > numPeers/2 {
                         // Initialize leader nextIndex and match index
                         for id:=0; id < numPeers; id++{
@@ -1033,13 +1050,13 @@ func Make(peers []*labrpc.ClientEnd, me int,
                             rf.matchIndex[id] = -1
                         }
 
-                        fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d and details of replies is %v\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2,replies)
+                        fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d \n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
                         rf.state = Leader
         //                fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
                         go rf.sendHeartbeats()
                         // sanity check: (if there is another leader in this term then it cannot be get the majority of votes)
                         if rf.gotHeartbeat {
-                            log.Fatal("Two leaders won election in the same term!")
+                            //log.Fatal("Two leaders won election in the same term!")
                         }
                     } else if rf.gotHeartbeat {
           //              fmt.Printf("   peer %d candidate of term %d: I got heartbeat from a leader. So I step down :) \n",rf.me, rf.currentTerm)
