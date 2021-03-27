@@ -22,7 +22,7 @@ import "sync/atomic"
 import "github.com/zilmano/raftproj/labrpc"
 import "github.com/zilmano/raftproj/labgob"
 import "math/rand"
-import "fmt"
+//import "fmt"
 import "time"
 import "log"
 import "math"
@@ -315,13 +315,13 @@ func (rf *Raft) CheckTerm(peerTerm int) bool {
 }
 
 func (rf *Raft) ApplyChannel(commandIndex int, prevCommitIndex int) {
-    fmt.Printf("   AppyChannel::peer %d: prevCommitIndex %d currCommitIndex %d\n", rf.me, prevCommitIndex, commandIndex)
+    //fmt.Printf("   AppyChannel::peer %d: prevCommitIndex %d currCommitIndex %d\n", rf.me, prevCommitIndex, commandIndex)
     for commitIndex := prevCommitIndex+1; commitIndex <= commandIndex; commitIndex++ { 
         var oneApplyMsg ApplyMsg
         oneApplyMsg.CommandValid = true
         // Yaikes! Tester expects the log to start from index 1, while we start from index 0., need to increase +1
         oneApplyMsg.CommandIndex = commitIndex+1
-        fmt.Printf("   AppyChannel::peer %d: ApplyMsg %d\n", rf.me, oneApplyMsg.CommandIndex)
+        //fmt.Printf("   AppyChannel::peer %d: ApplyMsg %d\n", rf.me, oneApplyMsg.CommandIndex)
         oneApplyMsg.Command = rf.log[commitIndex].Command
         rf.applyCh <- oneApplyMsg
     }
@@ -646,7 +646,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     rf.log = append(rf.log, oneEntry)
     rf.persist() // Saving state
     rf.mu.Unlock()
-    fmt.Printf("START %d peer %d: Adding command %d. Leader new log size: %d\n", command, myId , command , len(rf.log))
+    //fmt.Printf("START %d peer %d: Adding command %d. Leader new log size: %d\n", command, myId , command , len(rf.log))
     
     go func() {
         // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
@@ -733,7 +733,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             rf.mu.Unlock()
                         // TODO: That was a cool bug here, with nextIndex being decremented when the message is not delivered
                         } else  {
-                            fmt.Printf("START %d peer %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, myId, serverId)
+                            //fmt.Printf("START %d peer %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, myId, serverId)
                             rf.mu.Lock()
                             defer rf.mu.Unlock()
                             if rf.nextIndex[serverId] != 0 {
@@ -782,7 +782,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
             rf.mu.Unlock()
 
             if (votesForIndex > (numPeers/2)){ 
-                fmt.Printf("START %d peer %d: Got enough votes. Commiting entries %d to %d.\n", command, myId, rf.commitIndex+1, N)
+                //fmt.Printf("START %d peer %d: Got enough votes. Commiting entries %d to %d.\n", command, myId, rf.commitIndex+1, N)
                 go func(){
                     //committed = true
                     rf.mu.Lock()
@@ -896,7 +896,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
             
             switch state {
             case Follower:
-                fmt.Printf("-> Peer %d term %d: I am follolwer.\n",rf.me, rf.currentTerm)
+                //fmt.Printf("-> Peer %d term %d: I am follolwer.\n",rf.me, rf.currentTerm)
                 snoozeTime := rand.Float64()*(RANDOM_TIMER_MAX-RANDOM_TIMER_MIN) + RANDOM_TIMER_MIN
                 //fmt.Printf("   peer %d  term %d -- follower -- : Set election timer to time %f\n", rf.me, rf.currentTerm, snoozeTime)
                 time.Sleep(time.Duration(snoozeTime) * time.Millisecond) 
@@ -904,7 +904,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Lock()  
                 //fmt.Printf("   peer %d term %d -- follower -- : my election timer had elapsed.\n",rf.me, rf.currentTerm)
                 if (!rf.gotHeartbeat) {
-                    fmt.Printf("-- Peer %d term %d -- follower --: did not get heartbeat during the election timer. Starting election!\n",rf.me, rf.currentTerm) 
+                    //fmt.Printf("-- Peer %d term %d -- follower --: did not get heartbeat during the election timer. Starting election!\n",rf.me, rf.currentTerm) 
                     rf.state = Candidate
                 }
                 rf.gotHeartbeat = false
@@ -915,11 +915,11 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 rf.mu.Lock()
                 rf.currentTerm++
 
-                fmt.Printf("-> peer %d term %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm-1, rf.currentTerm)
+                //fmt.Printf("-> peer %d term %d: I am candidate! Starting election term %d\n",rf.me, rf.currentTerm-1, rf.currentTerm)
 
                 numPeers := len(rf.peers) // TODO: figure out what to with mutex when reading. Atomic? Lock?
                 rf.votedFor = rf.me
-                oldTerm := rf.currentTerm // cache Old term before sleep for logging purposes  
+                //oldTerm := rf.currentTerm // cache Old term before sleep for logging purposes  
                 rf.persist() // Saving state
                 rf.mu.Unlock()
                 
@@ -942,9 +942,9 @@ func Make(peers []*labrpc.ClientEnd, me int,
                 close(replyCh)
 
                 rf.mu.Lock()
-                fmt.Printf("-- peer %d term %d -- candidate -- :Waking up from snooze to count votes. %f\n", rf.me, oldTerm, snoozeTime)
+                //fmt.Printf("-- peer %d term %d -- candidate -- :Waking up from snooze to count votes. %f\n", rf.me, oldTerm, snoozeTime)
                 if (rf.state != Follower) {
-                    fmt.Printf("-- peer %d term %d -- candidate --: Start Counting votes...\n\n",rf.me, rf.currentTerm)
+                    //fmt.Printf("-- peer %d term %d -- candidate --: Start Counting votes...\n\n",rf.me, rf.currentTerm)
                     
                     if voteCount > numPeers/2 {
                         // Initialize leader nextIndex and match index
@@ -953,7 +953,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                             rf.matchIndex[id] = -1
                         }
 
-                        fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
+                        //fmt.Printf("   peer %d candidate: I am elected leader for term %d. voteCount:%d majority_treshold %d\n\n",rf.me,rf.currentTerm, voteCount, numPeers/2)
                         rf.state = Leader
                         //fmt.Printf("-> Peer %d leader of term %d: I send first heartbeat round to assert my authority.\n\n",rf.me, rf.currentTerm)
                         go rf.sendHeartbeats()
@@ -968,14 +968,14 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         //fmt.Printf("   peer %d candidate term %d: Did not have enough votes. Moving to a new election term.\n\n",rf.me,rf.currentTerm)
                     }  
                 } else {
-                   fmt.Printf("-- peer %d term %d -- candidate -- :I woke up, butsomeone with higher term answered. Reverting to follower :/ %f\n", rf.me, oldTerm, snoozeTime)
+                   //fmt.Printf("-- peer %d term %d -- candidate -- :I woke up, butsomeone with higher term answered. Reverting to follower :/ %f\n", rf.me, oldTerm, snoozeTime)
                  
                 }
                 rf.mu.Unlock()
                 
 
             case Leader:
-                fmt.Printf("-> Peer %d term %d: I am leader.\n\n",rf.me, rf.currentTerm)
+                //fmt.Printf("-> Peer %d term %d: I am leader.\n\n",rf.me, rf.currentTerm)
                 snoozeTime := (1/HEARTBEAT_RATE)*1000 
                 //fmt.Printf("   Leader %d term %d: snooze for %f\n", rf.me, rf.currentTerm, snoozeTime)
                 
@@ -993,7 +993,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                     if rf.gotHeartbeat  {
                         log.Fatal("Fatal Error: Have two leaders in the same term!!!")
                     }
-                    fmt.Printf("-- peer %d term %d --leader-- : I send periodic heartbeat.\n",rf.me, rf.currentTerm)
+                    //fmt.Printf("-- peer %d term %d --leader-- : I send periodic heartbeat.\n",rf.me, rf.currentTerm)
                     go rf.sendHeartbeats()
                 } 
                 rf.mu.Unlock()
