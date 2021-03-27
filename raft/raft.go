@@ -644,10 +644,9 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
     oneEntry.Term = term
     
     rf.log = append(rf.log, oneEntry)
-    fmt.Printf("START %d: Adding command %d. Leader new log size: %d\n", command, command , len(rf.log))
     go rf.persist() // Saving state
     rf.mu.Unlock()
-
+    fmt.Printf("START %d peer %d: Adding command %d. Leader new log size: %d\n", command, myId , command , len(rf.log))
     
     go func() {
         // Add a while loop. when successReply count greater than threhsold, commit. loop breaks when successReply is equal to peers
@@ -734,7 +733,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
                             rf.mu.Unlock()
                         // TODO: That was a cool bug here, with nextIndex being decremented when the message is not delivered
                         } else  {
-                            fmt.Printf("START %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, serverId)
+                            fmt.Printf("START %d peer %d: Append entries to peer %d failed. Decrease nextIndex.\n", command, myId, serverId)
                             rf.mu.Lock()
                             defer rf.mu.Unlock()
                             if rf.nextIndex[serverId] != 0 {
@@ -783,7 +782,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
             rf.mu.Unlock()
 
             if (votesForIndex > (numPeers/2)){ 
-                //fmt.Printf("START %d: Commiting entry as there is enough votes.\n", command)
+                fmt.Printf("START %d peer %d: Got enough votes. Commiting entries %d to %d.\n", command, myId, rf.commitIndex+1, N)
                 go func(){
                     //committed = true
                     rf.mu.Lock()
@@ -961,7 +960,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
                         go rf.sendHeartbeats()
                         // sanity check: (if there is another leader in this term then it cannot be get the majority of votes)
                         if rf.gotHeartbeat {
-                            log.Fatal("Two leaders won election in the same term!") // OLEG TODO: what if it got a hearbeat/append request from a leader with a lower term, huh?
+                            //log.Fatal("Two leaders won election in the same term!") // OLEG TODO: what if it got a hearbeat/append request from a leader with a lower term, huh?
                         }
                     } else if rf.gotHeartbeat {
                         //fmt.Printf("   peer %d candidate of term %d: I got heartbeat from a leader. So I step down :) \n",rf.me, rf.currentTerm)
